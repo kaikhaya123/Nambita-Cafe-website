@@ -38,8 +38,9 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="relative aspect-[16/9] w-full bg-[#F4EFD8]">
+          <div className="relative aspect-[16/9] w-full bg-white">
             <Image src={item.image} alt={item.name} fill sizes="(max-width: 640px) 100vw, 512px" className="object-cover" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
             <button
               type="button"
               aria-label="Close"
@@ -83,7 +84,7 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
             <button
               type="button"
               onClick={handleAdd}
-              className="mt-6 flex w-full items-center justify-between rounded-full bg-black-900 px-6 py-4 font-dm-sans text-sm uppercase tracking-[0.12em] text-white"
+              className="mt-6 flex w-full items-center justify-between rounded-full bg-[#FFFF00] px-6 py-4 font-dm-sans text-sm uppercase tracking-[0.12em] text-black-900"
             >
               <span>Add to Order</span>
               <span className="font-bold">R{total.toFixed(2)}</span>

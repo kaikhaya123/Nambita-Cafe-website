@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
-import { DELIVERY_FEE, lineTotal, useCart } from '@/lib/cart'
+import { lineTotal, useCart } from '@/lib/cart'
 import { closeCartDrawer, useCartDrawerOpen } from '@/lib/cart-drawer'
 
 export default function CartDrawer() {
@@ -10,7 +10,7 @@ export default function CartDrawer() {
   const isOpen = useCartDrawerOpen()
 
   const subtotal = cart.reduce((sum, line) => sum + lineTotal(line), 0)
-  const orderTotal = subtotal + DELIVERY_FEE
+  const orderTotal = subtotal
 
   return (
       <AnimatePresence>
@@ -84,10 +84,6 @@ export default function CartDrawer() {
                       <div className="flex items-center justify-between font-dm-sans text-sm text-black-900/70">
                         <span>Subtotal</span>
                         <span>R{subtotal.toFixed(2)}</span>
-                      </div>
-                      <div className="flex items-center justify-between font-dm-sans text-sm text-black-900/70">
-                        <span>Delivery Fee</span>
-                        <span>R{DELIVERY_FEE.toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-black/10 pt-3">
