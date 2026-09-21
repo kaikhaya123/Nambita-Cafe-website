@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Footer from '@/components/layout/Footer'
-import { useCart, cartSubtotal, lineTotal, DELIVERY_FEE } from '@/lib/cart'
+import { useCart, cartSubtotal, lineTotal } from '@/lib/cart'
+import { cafeLocations } from '@/lib/cafe-locations'
 
 type Step = 'details' | 'review' | 'processing'
 
@@ -15,7 +16,7 @@ interface CustomerDetails {
   lastName: string
   phone: string
   email: string
-  address: string
+  pickupLocationId: string
   notes: string
 }
 
@@ -24,7 +25,7 @@ const emptyDetails: CustomerDetails = {
   lastName: '',
   phone: '',
   email: '',
-  address: '',
+  pickupLocationId: '',
   notes: '',
 }
 
@@ -36,7 +37,7 @@ const stepIconSrc: Record<'details' | 'review' | 'processing', string> = {
 
 const stepMeta = [
   { key: 'details', label: 'Personal Details' },
-  { key: 'review', label: 'Delivery' },
+  { key: 'review', label: 'Review' },
   { key: 'processing', label: 'Payment' },
 ] as const
 
@@ -78,15 +79,20 @@ export default function CheckoutPage() {
   const [paymentError, setPaymentError] = useState<string | null>(null)
 
   const subtotal = cartSubtotal(cart)
-  const total = subtotal + DELIVERY_FEE
+  const total = subtotal
 
   const isDetailsValid = useMemo(
     () =>
       details.firstName.trim().length > 0 &&
       details.lastName.trim().length > 0 &&
       details.phone.trim().length > 0 &&
-      details.address.trim().length > 0,
+      details.pickupLocationId.trim().length > 0,
     [details]
+  )
+
+  const selectedLocation = useMemo(
+    () => cafeLocations.find((location) => location.id === details.pickupLocationId) ?? null,
+    [details.pickupLocationId]
   )
 
   const updateField = (field: keyof CustomerDetails) => (
@@ -106,7 +112,6 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           amount: total,
           subtotal,
-          deliveryFee: DELIVERY_FEE,
           items: cart,
           customer: details,
         }),
@@ -182,7 +187,7 @@ export default function CheckoutPage() {
               </h1>
               <StepIcon step="details" />
               <p className="mt-2 text-center text-sm text-black-900/60">
-                Tell us where to send your order.
+                Tell us who&apos;s collecting and where you&apos;ll pick up.
               </p>
 
               <form
@@ -238,17 +243,37 @@ export default function CheckoutPage() {
                   />
                 </label>
 
-                <label className="flex flex-col gap-1.5">
-                  <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Delivery Address / Location</span>
-                  <textarea
-                    required
-                    rows={3}
-                    value={details.address}
-                    onChange={updateField('address')}
-                    className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
-                    placeholder="Street, area, and any landmark that helps our driver find you"
-                  />
-                </label>
+                <div className="flex flex-col gap-1.5">
+                  <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Pickup Location</span>
+                  <div className="flex flex-col gap-2">
+                    {cafeLocations.map((location) => (
+                      <label
+                        key={location.id}
+                        className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${
+                          details.pickupLocationId === location.id
+                            ? 'border-black-900 bg-black-900/5'
+                            : 'border-black/15 bg-white'
+                        }`}
+                      >
+                        <input
+                          required
+                          type="radio"
+                          name="pickupLocationId"
+                          value={location.id}
+                          checked={details.pickupLocationId === location.id}
+                          onChange={updateField('pickupLocationId')}
+                          className="mt-1 h-4 w-4 accent-black"
+                        />
+                        <span>
+                          <span className="block font-dm-sans text-sm font-bold text-black-900">{location.name}</span>
+                          <span className="block font-dm-sans text-xs text-black-900/60">
+                            {location.addressLine1}, {location.addressLine2}
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
 
                 <label className="flex flex-col gap-1.5">
                   <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Notes (optional)</span>
@@ -279,11 +304,15 @@ export default function CheckoutPage() {
               <StepIcon step="review" />
 
               <div className="mt-6 rounded-2xl border border-black/10 bg-white p-5">
-                <p className="font-teko text-lg uppercase tracking-[0.05em] text-black-900">Delivering To</p>
+                <p className="font-teko text-lg uppercase tracking-[0.05em] text-black-900">Pickup From</p>
                 <p className="mt-1 font-dm-sans text-sm text-black-900">
                   {details.firstName} {details.lastName} &middot; {details.phone}
                 </p>
-                <p className="mt-1 font-dm-sans text-sm text-black-900/70">{details.address}</p>
+                {selectedLocation && (
+                  <p className="mt-1 font-dm-sans text-sm text-black-900/70">
+                    {selectedLocation.name} &mdash; {selectedLocation.addressLine1}, {selectedLocation.addressLine2}
+                  </p>
+                )}
                 {details.notes && <p className="mt-1 font-dm-sans text-xs text-black-900/50">Notes: {details.notes}</p>}
                 <button
                   type="button"
@@ -320,10 +349,6 @@ export default function CheckoutPage() {
                   <div className="flex items-center justify-between font-dm-sans text-sm text-black-900/70">
                     <span>Subtotal</span>
                     <span>R{subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex items-center justify-between font-dm-sans text-sm text-black-900/70">
-                    <span>Delivery Fee</span>
-                    <span>R{DELIVERY_FEE.toFixed(2)}</span>
                   </div>
                   <div className="mt-2 flex items-center justify-between border-t border-black/10 pt-2">
                     <span className="font-teko text-xl uppercase tracking-[0.05em] text-black-900">Total</span>

@@ -31,7 +31,7 @@ function CheckoutSuccessContent() {
         </p>
       )}
       <p className="max-w-sm text-sm text-black-900/60">
-        We&apos;ll be in touch with updates on your delivery.
+        Check your email for your receipt &mdash; we&apos;ll have your order ready for pickup.
       </p>
       <Link
         href="/menu"

@@ -1,20 +1,26 @@
 -- Run this once in the Supabase SQL editor (Project > SQL Editor > New query).
 
+create sequence if not exists orders_order_seq;
+
+create or replace function generate_order_number() returns text as $$
+  select 'NC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('orders_order_seq')::text, 4, '0');
+$$ language sql;
+
 create table if not exists orders (
   id uuid primary key default gen_random_uuid(),
-  order_number text not null unique,
+  order_number text not null unique default generate_order_number(),
   status text not null default 'pending' check (status in ('pending', 'paid', 'failed', 'cancelled')),
 
   customer_first_name text not null,
   customer_last_name text not null,
   customer_phone text not null,
   customer_email text,
-  delivery_address text not null,
+  pickup_location_id text not null,
+  pickup_location_name text not null,
   notes text,
 
   items jsonb not null,
   subtotal numeric(10, 2) not null,
-  delivery_fee numeric(10, 2) not null,
   total numeric(10, 2) not null,
 
   yoco_checkout_id text,

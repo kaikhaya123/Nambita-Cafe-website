@@ -52,11 +52,11 @@ export default function NambitaCafeMenuPage() {
               className="mb-16 last:mb-12"
             >
               <div className="-mx-4 mb-8 flex items-center justify-center bg-black-900 px-5 py-5 sm:-mx-5 sm:px-8 lg:-mx-10">
-                <h2 className="font-teko text-2xl uppercase tracking-[0.03em] text-white sm:text-3xl md:text-4xl">
+                <h2 className="font-teko text-xl uppercase tracking-[0.02em] text-white sm:text-2xl sm:tracking-[0.025em] md:text-3xl md:tracking-[0.03em]">
                   {section.title}
                 </h2>
               </div>
-              <div className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-8 sm:gap-y-8 lg:grid-cols-3">
                 {section.items.map((item, index) => (
                   <motion.div
                     key={item.id}
@@ -71,7 +71,7 @@ export default function NambitaCafeMenuPage() {
                       onClick={() => setSelectedItem(item)}
                       className="block w-full text-left"
                     >
-                      <div className="relative aspect-[4/3] w-full bg-[#F4EFD8]">
+                      <div className="relative aspect-[4/3] w-full bg-white">
                         <Image
                           src={item.image}
                           alt={item.name}
@@ -79,26 +79,28 @@ export default function NambitaCafeMenuPage() {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover"
                         />
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
                       </div>
-                      <div className="p-4 pb-0">
-                        <h3 className="font-teko text-[1.04rem] sm:text-[1.12rem] uppercase leading-tight tracking-[0.04em] sm:tracking-[0.05em] text-black-900 md:text-[1.2rem]">
+                      <div className="p-3 pb-0 sm:p-3.5">
+                        <h3 className="font-teko text-[0.88rem] sm:text-[0.98rem] uppercase leading-tight tracking-[0.02em] sm:tracking-[0.03em] text-black-900 md:text-[1.05rem] md:tracking-[0.04em]">
                           {item.name}
                         </h3>
-                        <p className="type-subtitle tabular-nums mt-1 text-[1.04rem] sm:text-[1.12rem] font-black leading-tight tracking-tight text-black-900 md:text-[1.2rem]">
+                        <p className="type-subtitle tabular-nums mt-1 text-[0.88rem] sm:text-[0.98rem] font-black leading-tight tracking-tight text-black-900 md:text-[1.05rem]">
                           R{item.price.toFixed(2)}
-                        </p>
-                        <p className="mt-2 text-[0.92rem] leading-relaxed text-black-900 sm:text-base">
-                          {item.description}
                         </p>
                       </div>
                     </button>
-                    <div className="p-4 pt-3">
+                    <div className="p-3 pt-2 sm:p-3.5 sm:pt-2.5">
                       <button
                         type="button"
                         onClick={() => handleQuickAdd(item)}
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-black-900 py-2.5 font-dm-sans text-xs font-bold uppercase tracking-[0.1em] text-white transition-opacity duration-200 hover:opacity-85"
+                        className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#FFFF00] py-2 font-dm-sans text-[0.68rem] sm:text-xs font-black uppercase tracking-[0.02em] sm:tracking-[0.06em] text-black transition-opacity duration-200 hover:opacity-85"
                       >
-                        <span className="flex h-4 w-4 items-center justify-center rounded-full border border-white text-[0.65rem] leading-none">+</span>
+                        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-black-900 text-[#FFFF00] sm:h-5 sm:w-5">
+                          <svg viewBox="0 0 24 24" fill="none" className="h-2.5 w-2.5 sm:h-3 sm:w-3" aria-hidden="true">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                          </svg>
+                        </span>
                         Add to Cart
                       </button>
                     </div>

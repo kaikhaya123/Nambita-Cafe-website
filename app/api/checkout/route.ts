@@ -1,6 +1,6 @@
-import { randomInt } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
+import { cafeLocationsById } from '@/lib/cafe-locations'
 import type { OrderLine } from '@/lib/menu-data'
 
 const YOCO_SECRET_KEY = process.env.YOCO_SECRET_KEY
@@ -8,20 +8,15 @@ const YOCO_SECRET_KEY = process.env.YOCO_SECRET_KEY
 interface CheckoutRequestBody {
   amount: number
   subtotal: number
-  deliveryFee: number
   items: OrderLine[]
   customer: {
     firstName: string
     lastName: string
     phone: string
     email: string
-    address: string
+    pickupLocationId: string
     notes: string
   }
-}
-
-function generateOrderNumber() {
-  return `NC-${randomInt(100000, 1000000)}`
 }
 
 export async function POST(request: NextRequest) {
@@ -42,10 +37,44 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid checkout request.' }, { status: 400 })
   }
 
-  const { amount, subtotal, deliveryFee, items, customer } = body
-  const orderNumber = generateOrderNumber()
+  const { amount, subtotal, items, customer } = body
+
+  const pickupLocation = cafeLocationsById[customer.pickupLocationId]
+  if (!pickupLocation) {
+    return NextResponse.json({ error: 'Please choose a valid pickup location.' }, { status: 400 })
+  }
+
   const origin = request.nextUrl.origin
   const amountInCents = Math.round(amount * 100)
+
+  const supabase = getSupabaseAdmin()
+
+  let orderNumber: string
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .insert({
+        status: 'pending',
+        customer_first_name: customer.firstName,
+        customer_last_name: customer.lastName,
+        customer_phone: customer.phone,
+        customer_email: customer.email || null,
+        pickup_location_id: pickupLocation.id,
+        pickup_location_name: pickupLocation.name,
+        notes: customer.notes || null,
+        items,
+        subtotal,
+        total: amount,
+      })
+      .select('order_number')
+      .single()
+
+    if (error) throw error
+    orderNumber = data.order_number as string
+  } catch (error) {
+    console.error('Failed to save order to Supabase', error)
+    return NextResponse.json({ error: 'Could not save your order right now. Please try again.' }, { status: 500 })
+  }
 
   const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
     method: 'POST',
@@ -64,7 +93,7 @@ export async function POST(request: NextRequest) {
         customerName: `${customer.firstName} ${customer.lastName}`.trim(),
         customerPhone: customer.phone,
         customerEmail: customer.email,
-        deliveryAddress: customer.address,
+        pickupLocationId: pickupLocation.id,
       },
     }),
   })
@@ -81,28 +110,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Could not start payment right now. Please try again.' }, { status: 502 })
   }
 
-  try {
-    const supabase = getSupabaseAdmin()
-    const { error } = await supabase.from('orders').insert({
-      order_number: orderNumber,
-      status: 'pending',
-      customer_first_name: customer.firstName,
-      customer_last_name: customer.lastName,
-      customer_phone: customer.phone,
-      customer_email: customer.email || null,
-      delivery_address: customer.address,
-      notes: customer.notes || null,
-      items,
-      subtotal,
-      delivery_fee: deliveryFee,
-      total: amount,
-      yoco_checkout_id: yocoData.id ?? null,
-    })
+  const { error: updateError } = await supabase
+    .from('orders')
+    .update({ yoco_checkout_id: yocoData.id ?? null })
+    .eq('order_number', orderNumber)
 
-    if (error) throw error
-  } catch (error) {
-    console.error('Failed to save order to Supabase', error)
-    return NextResponse.json({ error: 'Could not save your order right now. Please try again.' }, { status: 500 })
+  if (updateError) {
+    console.error('Failed to attach Yoco checkout id to order', updateError)
   }
 
   return NextResponse.json({ redirectUrl: yocoData.redirectUrl, checkoutId: yocoData.id })

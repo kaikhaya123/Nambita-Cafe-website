@@ -3,8 +3,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import type { AddOn, MenuItem, OrderLine } from './menu-data'
 
-export const DELIVERY_FEE = 50
-
 const STORAGE_KEY = 'nambita-cart'
 
 let cart: OrderLine[] = []

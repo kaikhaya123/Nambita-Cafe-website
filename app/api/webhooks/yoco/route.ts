@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
+import { sendOrderReceiptEmail, type OrderForReceipt } from '@/lib/email/order-receipt'
 
 const YOCO_WEBHOOK_SECRET = process.env.YOCO_WEBHOOK_SECRET
 
@@ -61,13 +62,31 @@ export async function POST(request: NextRequest) {
   else if (event.type?.includes('failed')) status = 'failed'
 
   if (orderNumber && status) {
+    const supabase = getSupabaseAdmin()
+
     try {
-      const supabase = getSupabaseAdmin()
       const { error } = await supabase.from('orders').update({ status }).eq('order_number', orderNumber)
       if (error) throw error
     } catch (error) {
       console.error('Failed to update order status from webhook', error)
       return NextResponse.json({ error: 'Failed to update order' }, { status: 500 })
+    }
+
+    if (status === 'paid') {
+      try {
+        const { data: order, error } = await supabase
+          .from('orders')
+          .select(
+            'order_number, customer_first_name, customer_last_name, customer_email, pickup_location_name, notes, items, subtotal, total, created_at'
+          )
+          .eq('order_number', orderNumber)
+          .single()
+
+        if (error) throw error
+        await sendOrderReceiptEmail(order as OrderForReceipt)
+      } catch (error) {
+        console.error('Failed to send receipt email from webhook', error)
+      }
     }
   }
 
