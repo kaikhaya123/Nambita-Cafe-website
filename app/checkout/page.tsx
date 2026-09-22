@@ -43,16 +43,85 @@ const stepMeta = [
 
 const stepOrder = stepMeta.map((s) => s.key)
 
-function stepCircleClass(stepKey: (typeof stepMeta)[number]['key'], index: number, currentStep: Step) {
-  if (currentStep === stepKey) return 'bg-black-900 text-white'
-  if (stepOrder.indexOf(currentStep) > index) return 'bg-black-900/40 text-white'
-  return 'bg-black/10 text-black-900/50'
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden="true">
+      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
 }
 
-function StepIcon({ step }: Readonly<{ step: 'details' | 'review' | 'processing' }>) {
+function StepProgress({ currentStep }: Readonly<{ currentStep: Step }>) {
+  const currentIndex = stepOrder.indexOf(currentStep)
+
   return (
-    <div className="mx-auto mt-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FFFF00]">
-      <Image src={stepIconSrc[step]} alt="" width={24} height={24} className="h-6 w-6 object-contain" />
+    <div className="mx-auto flex w-full max-w-sm items-center">
+      {stepMeta.map((s, index) => {
+        const isComplete = currentIndex > index
+        const isCurrent = currentStep === s.key
+
+        let circleClass = 'bg-black text-black-900'
+        if (isComplete) {
+          circleClass = 'bg-black-900 text-white'
+        } else if (isCurrent) {
+          circleClass = 'bg-[#FFFF00] text-black-900 ring-2 ring-black-900 ring-offset-2 ring-offset-[#FAF8F3]'
+        }
+
+        return (
+          <div key={s.key} className="flex flex-1 items-center last:flex-none">
+            <div className="flex flex-col items-center gap-2">
+              <div
+                className={`flex h-9 w-9 items-center justify-center rounded-full font-dm-sans text-xs font-bold transition-colors ${circleClass}`}
+              >
+                {isComplete ? <CheckIcon /> : index + 1}
+              </div>
+              <span
+                className={`whitespace-nowrap font-dm-sans text-[0.65rem] uppercase tracking-[0.06em] ${
+                  isCurrent ? 'font-bold text-black-900' : 'text-black-900/40'
+                }`}
+              >
+                {s.label}
+              </span>
+            </div>
+            {index < stepMeta.length - 1 && (
+              <div className="mx-2 mb-5 h-[2px] flex-1 rounded-full bg-black/10 sm:mx-3">
+                <div
+                  className={`h-full rounded-full bg-black-900 transition-all duration-300 ${isComplete ? 'w-full' : 'w-0'}`}
+                />
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function StepHeader({
+  step,
+  title,
+  subtitle,
+}: Readonly<{ step: 'details' | 'review' | 'processing'; title: string; subtitle?: string }>) {
+  return (
+    <div className="flex flex-col items-center gap-3 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FFFF00] shadow-sm">
+        <Image src={stepIconSrc[step]} alt="" width={26} height={26} className="h-6 w-6 object-contain" />
+      </div>
+      <div>
+        <h1 className="font-teko text-3xl uppercase tracking-[0.03em] text-black-900 sm:text-4xl">{title}</h1>
+        {subtitle && <p className="mx-auto mt-1.5 max-w-xs text-sm text-black-900">{subtitle}</p>}
+      </div>
+    </div>
+  )
+}
+
+function FieldGroup({ label, children }: Readonly<{ label: string; children: React.ReactNode }>) {
+  return (
+    <div className="flex flex-col gap-4 border-t border-black/10 pt-6 first:border-t-0 first:pt-0">
+      <span className="font-dm-sans text-[0.65rem] font-bold uppercase tracking-[0.15em] text-black-900">
+        {label}
+      </span>
+      {children}
     </div>
   )
 }
@@ -156,95 +225,74 @@ export default function CheckoutPage() {
             <CancelledOrFailedBanner />
           </Suspense>
 
-          <div className="mb-8 flex justify-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-3 shadow-sm">
-                {stepMeta.map((s, index) => (
-                  <div key={s.key} className="flex items-center gap-2">
-                    <div className="flex flex-col items-center gap-1.5">
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-full font-dm-sans text-xs font-bold ${stepCircleClass(s.key, index, step)}`}
-                      >
-                        {index + 1}
-                      </div>
-                      <span
-                        className={`whitespace-nowrap font-dm-sans text-[0.65rem] uppercase tracking-[0.06em] ${
-                          step === s.key ? 'text-black-900' : 'text-black-900/40'
-                        }`}
-                      >
-                        {s.label}
-                      </span>
-                    </div>
-                    {index < 2 && <div className="mb-5 h-px w-8 bg-black/15 sm:w-14" />}
-                  </div>
-                ))}
-              </div>
+          <div className="mb-10 flex justify-center">
+            <StepProgress currentStep={step} />
           </div>
 
           {step === 'details' && (
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-              <h1 className="text-center font-teko text-3xl uppercase tracking-[0.03em] text-black-900 sm:text-4xl">
-                Your Details
-              </h1>
-              <StepIcon step="details" />
-              <p className="mt-2 text-center text-sm text-black-900/60">
-                Tell us who&apos;s collecting and where you&apos;ll pick up.
-              </p>
+              <StepHeader
+                step="details"
+                title="Your Details"
+                subtitle="Tell us who's collecting and where you'll pick up."
+              />
 
               <form
-                className="mt-8 flex flex-col gap-4"
+                className="mt-8 flex flex-col gap-6 rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8"
                 onSubmit={(event) => {
                   event.preventDefault()
                   if (isDetailsValid) setStep('review')
                 }}
               >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FieldGroup label="Contact Info">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label className="flex flex-col gap-1.5">
+                      <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Name</span>
+                      <input
+                        required
+                        value={details.firstName}
+                        onChange={updateField('firstName')}
+                        className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
+                        placeholder="First name"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1.5">
+                      <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Surname</span>
+                      <input
+                        required
+                        value={details.lastName}
+                        onChange={updateField('lastName')}
+                        className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
+                        placeholder="Last name"
+                      />
+                    </label>
+                  </div>
+
                   <label className="flex flex-col gap-1.5">
-                    <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Name</span>
+                    <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Contact Number</span>
                     <input
                       required
-                      value={details.firstName}
-                      onChange={updateField('firstName')}
+                      type="tel"
+                      value={details.phone}
+                      onChange={updateField('phone')}
                       className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
-                      placeholder="Sbonakaliso"
+                      placeholder="Phone number"
                     />
                   </label>
+
                   <label className="flex flex-col gap-1.5">
-                    <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Surname</span>
+                    <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Email (optional)</span>
                     <input
-                      required
-                      value={details.lastName}
-                      onChange={updateField('lastName')}
+                      type="email"
+                      value={details.email}
+                      onChange={updateField('email')}
                       className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
-                      placeholder="Ngcobo"
+                      placeholder="you@example.com"
                     />
                   </label>
-                </div>
+                </FieldGroup>
 
-                <label className="flex flex-col gap-1.5">
-                  <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Contact Number</span>
-                  <input
-                    required
-                    type="tel"
-                    value={details.phone}
-                    onChange={updateField('phone')}
-                    className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
-                    placeholder="071 234 5678"
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1.5">
-                  <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Email (optional)</span>
-                  <input
-                    type="email"
-                    value={details.email}
-                    onChange={updateField('email')}
-                    className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
-                    placeholder="you@example.com"
-                  />
-                </label>
-
-                <div className="flex flex-col gap-1.5">
-                  <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Pickup Location</span>
+                <FieldGroup label="Pickup Location">
                   <div className="flex flex-col gap-2">
                     {cafeLocations.map((location) => (
                       <label
@@ -266,29 +314,31 @@ export default function CheckoutPage() {
                         />
                         <span>
                           <span className="block font-dm-sans text-sm font-bold text-black-900">{location.name}</span>
-                          <span className="block font-dm-sans text-xs text-black-900/60">
+                          <span className="block font-dm-sans text-xs text-black-900/70">
                             {location.addressLine1}, {location.addressLine2}
                           </span>
                         </span>
                       </label>
                     ))}
                   </div>
-                </div>
+                </FieldGroup>
 
-                <label className="flex flex-col gap-1.5">
-                  <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Notes (optional)</span>
-                  <input
-                    value={details.notes}
-                    onChange={updateField('notes')}
-                    className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
-                    placeholder="Gate code, allergies, etc."
-                  />
-                </label>
+                <FieldGroup label="Notes">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70">Notes (optional)</span>
+                    <input
+                      value={details.notes}
+                      onChange={updateField('notes')}
+                      className="rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900"
+                      placeholder="Gate code, allergies, etc."
+                    />
+                  </label>
+                </FieldGroup>
 
                 <button
                   type="submit"
                   disabled={!isDetailsValid}
-                  className="mt-4 w-full rounded-full bg-black-900 py-4 font-dm-sans text-sm uppercase tracking-[0.12em] text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="w-full rounded-full bg-black-900 py-4 font-dm-sans text-sm uppercase tracking-[0.12em] text-white disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Continue to Review
                 </button>
@@ -298,10 +348,7 @@ export default function CheckoutPage() {
 
           {step === 'review' && (
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-              <h1 className="text-center font-teko text-3xl uppercase tracking-[0.03em] text-black-900 sm:text-4xl">
-                Review Your Order
-              </h1>
-              <StepIcon step="review" />
+              <StepHeader step="review" title="Review Your Order" />
 
               <div className="mt-6 rounded-2xl border border-black/10 bg-white p-5">
                 <p className="font-teko text-lg uppercase tracking-[0.05em] text-black-900">Pickup From</p>
@@ -317,7 +364,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setStep('details')}
-                  className="mt-3 font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/60 underline"
+                  className="mt-3 font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70 underline"
                 >
                   Edit details
                 </button>
@@ -327,20 +374,25 @@ export default function CheckoutPage() {
                 <p className="font-teko text-lg uppercase tracking-[0.05em] text-black-900">Order Summary</p>
                 <div className="mt-3 flex flex-col divide-y divide-black/10">
                   {cart.map((line) => (
-                    <div key={line.key} className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                      <div>
-                        <p className="font-dm-sans text-sm font-bold uppercase tracking-[0.04em] text-black-900">
-                          {line.quantity} × {line.item.name}
-                        </p>
-                        {line.addOns.length > 0 && (
-                          <p className="mt-1 text-xs text-black-900/60">
-                            + {line.addOns.map((addOn) => addOn.name).join(', ')}
-                          </p>
-                        )}
+                    <div key={line.key} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[#F4EFD8]">
+                        <Image src={line.item.image} alt={line.item.name} fill sizes="56px" className="object-cover" />
                       </div>
-                      <span className="whitespace-nowrap font-dm-sans text-sm font-bold text-black-900">
-                        R{lineTotal(line).toFixed(2)}
-                      </span>
+                      <div className="flex flex-1 items-start justify-between gap-3">
+                        <div>
+                          <p className="font-dm-sans text-sm font-bold uppercase tracking-[0.04em] text-black-900">
+                            {line.quantity} × {line.item.name}
+                          </p>
+                          {line.addOns.length > 0 && (
+                            <p className="mt-1 text-xs text-black-900/70">
+                              + {line.addOns.map((addOn) => addOn.name).join(', ')}
+                            </p>
+                          )}
+                        </div>
+                        <span className="whitespace-nowrap font-dm-sans text-sm font-bold text-black-900">
+                          R{lineTotal(line).toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -380,10 +432,9 @@ export default function CheckoutPage() {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center justify-center gap-5 py-20 text-center"
             >
-              <StepIcon step="processing" />
+              <StepHeader step="processing" title="Redirecting to Payment" />
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-black/10 border-t-black-900" />
-              <h1 className="font-teko text-2xl uppercase tracking-[0.03em] text-black-900">Redirecting to secure payment&hellip;</h1>
-              <p className="max-w-xs text-sm text-black-900/60">Please don&apos;t close this page.</p>
+              <p className="max-w-xs text-sm text-black-900/70">Please don&apos;t close this page.</p>
             </motion.div>
           )}
         </div>

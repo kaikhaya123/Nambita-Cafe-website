@@ -189,7 +189,7 @@ export default function NambitaCafeMapPage() {
         ) : (
           <div className="space-y-4">
             {decoratedLocations.length === 0 ? (
-              <p className="py-10 text-center text-sm text-black-900/60">No locations match your search.</p>
+              <p className="py-10 text-center text-sm text-black-900/70">No locations match your search.</p>
             ) : (
               decoratedLocations.map((location) => <LocationCard key={location.id} location={location} />)
             )}

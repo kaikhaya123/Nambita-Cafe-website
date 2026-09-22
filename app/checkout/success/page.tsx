@@ -30,7 +30,7 @@ function CheckoutSuccessContent() {
           Order <span className="font-bold text-black-900">{orderNumber}</span> is on its way to being prepared.
         </p>
       )}
-      <p className="max-w-sm text-sm text-black-900/60">
+      <p className="max-w-sm text-sm text-black-900/70">
         Check your email for your receipt &mdash; we&apos;ll have your order ready for pickup.
       </p>
       <Link
