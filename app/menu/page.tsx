@@ -71,7 +71,7 @@ export default function NambitaCafeMenuPage() {
                       onClick={() => setSelectedItem(item)}
                       className="block w-full text-left"
                     >
-                      <div className="relative aspect-[4/3] w-full bg-white">
+                      <div className="relative aspect-square w-full bg-white sm:aspect-[4/3]">
                         <Image
                           src={item.image}
                           alt={item.name}
@@ -81,16 +81,16 @@ export default function NambitaCafeMenuPage() {
                         />
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
                       </div>
-                      <div className="p-3 pb-0 sm:p-3.5">
+                      <div className="p-3 pb-1.5 sm:p-3.5 sm:pb-0">
                         <h3 className="font-teko text-[0.88rem] sm:text-[0.98rem] uppercase leading-tight tracking-[0.02em] sm:tracking-[0.03em] text-black-900 md:text-[1.05rem] md:tracking-[0.04em]">
                           {item.name}
                         </h3>
-                        <p className="type-subtitle tabular-nums mt-1 text-[0.88rem] sm:text-[0.98rem] font-black leading-tight tracking-tight text-black-900 md:text-[1.05rem]">
+                        <p className="type-subtitle tabular-nums mt-1.5 text-[0.88rem] sm:text-[0.98rem] font-black leading-tight tracking-tight text-black-900 md:text-[1.05rem]">
                           R{item.price.toFixed(2)}
                         </p>
                       </div>
                     </button>
-                    <div className="p-3 pt-2 sm:p-3.5 sm:pt-2.5">
+                    <div className="p-3 pt-2.5 sm:p-3.5 sm:pt-2.5">
                       <button
                         type="button"
                         onClick={() => handleQuickAdd(item)}

@@ -151,6 +151,24 @@ export default function NambitaCafe() {
 
         <div className="pointer-events-none absolute inset-0 z-10 bg-black/30" />
 
+        <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-start justify-end px-5 pb-14 text-left sm:px-8 sm:pb-16 lg:px-12 lg:pb-20">
+          <h2 className="m-0 font-teko font-bold text-white uppercase leading-[1.08] tracking-[0.05em] text-[2.4rem] drop-shadow-[0_6px_18px_rgba(0,0,0,0.5)] sm:text-6xl sm:tracking-[0.06em] md:text-7xl">
+            {['I', 'Love', 'Nambita 😋'].map((word, i) => (
+              <span key={word} className="inline-block overflow-hidden">
+                <motion.span
+                  className="inline-block"
+                  initial={{ y: '110%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.78, ease: pageEase, delay: 0.12 + i * 0.14 }}
+                >
+                  {word}
+                  {i < 2 ? ' ' : ''}
+                </motion.span>
+              </span>
+            ))}
+          </h2>
+        </div>
+
         <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 hidden justify-center lg:flex">
           <motion.svg
             width="30"
@@ -288,11 +306,11 @@ export default function NambitaCafe() {
                 <motion.a
                   href="/about"
                   whileHover={{ y: -2, scale: 1.02 }}
-                  className="group relative z-10 inline-flex items-center justify-center gap-3 overflow-hidden rounded-full border-2 border-transparent bg-[#111111] px-6 py-3 text-lg font-semibold uppercase text-white shadow-xl transition duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-black-900"
+                  className="group relative z-10 inline-flex items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-lg font-semibold uppercase text-black-900 shadow-xl transition duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-black-900"
                 >
-                  <span className="relative font-city-bold z-10 leading-none transition-colors duration-700 group-hover:text-white">About Nambita Cafe</span>
+                  <span className="relative font-city-bold leading-none">About Nambita Cafe</span>
                   <svg
-                    className="relative z-10 h-8 w-8 rotate-45 rounded-full border border-black-900 bg-white p-2 transition duration-300 ease-linear group-hover:border-none group-hover:rotate-90"
+                    className="relative h-8 w-8 rotate-45 rounded-full border border-black-900 bg-white p-2 transition duration-300 ease-linear group-hover:rotate-90"
                     viewBox="0 0 16 19"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -301,7 +319,6 @@ export default function NambitaCafe() {
                       className="fill-black-900"
                     />
                   </svg>
-                  <span className="pointer-events-none absolute inset-0 -left-full h-full w-full rounded-full bg-white transition-all duration-700 group-hover:left-0 group-hover:scale-150" />
                 </motion.a>
               </div>
             </motion.div>

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { lineTotal, useCart } from '@/lib/cart'
@@ -45,35 +46,40 @@ export default function CartDrawer() {
               {cart.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center gap-2 p-5 text-center">
                   <p className="font-teko text-xl uppercase tracking-[0.05em] text-black-900">Your cart is empty</p>
-                  <p className="text-sm text-black-900/60">Add something tasty from the menu.</p>
+                  <p className="text-sm text-black-900/70">Add something tasty from the menu.</p>
                 </div>
               ) : (
                 <>
                   <div className="flex flex-1 flex-col divide-y divide-black/10 overflow-y-auto p-5">
                     {cart.map((line) => (
-                      <div key={line.key} className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                        <div>
-                          <p className="font-dm-sans text-sm font-bold uppercase tracking-[0.04em] text-black-900">
-                            {line.quantity} × {line.item.name}
-                          </p>
-                          {line.addOns.length > 0 && (
-                            <p className="mt-1 text-xs text-black-900/60">
-                              + {line.addOns.map((addOn) => addOn.name).join(', ')}
-                            </p>
-                          )}
+                      <div key={line.key} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[#F4EFD8]">
+                          <Image src={line.item.image} alt={line.item.name} fill sizes="56px" className="object-cover" />
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="whitespace-nowrap font-dm-sans text-sm font-bold text-black-900">
-                            R{lineTotal(line).toFixed(2)}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label={`Remove ${line.item.name}`}
-                            onClick={() => removeFromCart(line.key)}
-                            className="text-xs uppercase tracking-[0.08em] text-black-900/50 underline"
-                          >
-                            Remove
-                          </button>
+                        <div className="flex flex-1 items-start justify-between gap-3">
+                          <div>
+                            <p className="font-dm-sans text-sm font-bold uppercase tracking-[0.04em] text-black-900">
+                              {line.quantity} × {line.item.name}
+                            </p>
+                            {line.addOns.length > 0 && (
+                              <p className="mt-1 text-xs text-black-900/70">
+                                + {line.addOns.map((addOn) => addOn.name).join(', ')}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="whitespace-nowrap font-dm-sans text-sm font-bold text-black-900">
+                              R{lineTotal(line).toFixed(2)}
+                            </span>
+                            <button
+                              type="button"
+                              aria-label={`Remove ${line.item.name}`}
+                              onClick={() => removeFromCart(line.key)}
+                              className="text-xs uppercase tracking-[0.08em] text-black-900/50 underline"
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
