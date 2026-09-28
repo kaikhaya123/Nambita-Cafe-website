@@ -25,12 +25,18 @@ create table if not exists orders (
 
   yoco_checkout_id text,
 
+  fulfillment_status text not null default 'new' check (fulfillment_status in ('new', 'preparing', 'ready', 'collected')),
+  preparing_at timestamptz,
+  ready_at timestamptz,
+  collected_at timestamptz,
+
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists orders_order_number_idx on orders (order_number);
 create index if not exists orders_status_idx on orders (status);
+create index if not exists orders_fulfillment_idx on orders (status, fulfillment_status, created_at);
 
 -- Keep updated_at current on every update.
 create or replace function set_updated_at()

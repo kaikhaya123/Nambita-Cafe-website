@@ -1,12 +1,8 @@
-'use client'
+// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials.
 
 import Image from 'next/image'
 import Link from 'next/link'
-
-const footerLocations = [
-  { title: 'Nambita Cafe KwaMashu', addressLine1: '206 Bhenjane Rd', addressLine2: 'KwaMashu, 4051' },
-  { title: 'Nambita Cafe Waterloo', addressLine1: '346 Pricklepear Rd', addressLine2: 'Waterloo, Blackburn, 4319' },
-]
+import { cafeLocations, directionsHref } from '@/lib/cafe-locations'
 
 const exploreLinks = [
   { name: 'Home', href: '/' },
@@ -20,11 +16,6 @@ const socialLinks = [
   { name: 'Facebook', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/facebook-app-symbol (2).png' },
   { name: 'TikTok', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/tik-tok (1).webp' },
 ]
-
-function footerDirectionsHref(location: (typeof footerLocations)[number]) {
-  const query = `${location.title}, ${location.addressLine1}, ${location.addressLine2}`
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
-}
 
 export default function Footer() {
   return (
@@ -49,7 +40,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-[#C98A2B]"
+                      className="font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel"
                     >
                       {link.name}
                     </Link>
@@ -61,15 +52,15 @@ export default function Footer() {
             <div>
               <p className="font-hagrid text-sm uppercase tracking-[0.14em] text-white">Visit Us</p>
               <ul className="mt-4 space-y-4">
-                {footerLocations.map((location) => (
-                  <li key={location.title}>
+                {cafeLocations.map((location) => (
+                  <li key={location.id}>
                     <a
-                      href={footerDirectionsHref(location)}
+                      href={directionsHref(location)}
                       target="_blank"
                       rel="noreferrer"
-                      className="group font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-[#C98A2B]"
+                      className="group font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel"
                     >
-                      <span className="block font-dm-sans-bold text-white/90 group-hover:text-[#C98A2B]">{location.title}</span>
+                      <span className="block font-dm-sans-bold text-white/90 group-hover:text-brand-caramel">{location.name}</span>
                       {location.addressLine1}, {location.addressLine2}
                     </a>
                   </li>
@@ -86,7 +77,7 @@ export default function Footer() {
                       href={social.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-[#C98A2B]"
+                      className="flex items-center gap-2 font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel"
                     >
                       <Image src={social.icon} alt="" width={16} height={16} aria-hidden="true" className="h-4 w-4 object-contain" />
                       {social.name}

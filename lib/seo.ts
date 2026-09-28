@@ -1,3 +1,5 @@
+// Builds the SEO tags (title, description, social previews) for each page. Set NEXT_PUBLIC_SITE_URL for the real domain.
+
 import type { Metadata } from 'next'
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://nambitacafe.co.za').replace(/\/$/, '')

@@ -1,3 +1,5 @@
+// Decorative wavy divider placed between page sections.
+
 type SectionDividerProps = {
   readonly bottomColor?: string
 }

@@ -1,3 +1,6 @@
+// The cafe branches. This list feeds the checkout pickup options, the /map page,
+// the footer addresses and the sales-by-branch report. To add a branch, add it here.
+
 export interface CafeLocation {
   id: string
   name: string
@@ -30,6 +33,13 @@ export const cafeLocationsById: Record<string, CafeLocation> = Object.fromEntrie
   cafeLocations.map((location) => [location.id, location])
 )
 
+/** Google Maps link that opens directions to a branch. */
+export function directionsHref(location: CafeLocation) {
+  const query = `${location.name}, ${location.addressLine1}, ${location.addressLine2}`
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+}
+
+/** Straight-line distance in km between two map points (the "haversine" formula). */
 export function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
   const R = 6371
   const dLat = ((b.lat - a.lat) * Math.PI) / 180

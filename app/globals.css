@@ -10,6 +10,13 @@
   text-rendering: geometricPrecision;
 }
 
+.font-lucy {
+  font-family: var(--font-lucy), 'Brush Script MT', cursive;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .font-city-bold {
   font-family: var(--font-city-bold), Georgia, 'Times New Roman', serif;
   font-style: normal;
@@ -41,7 +48,7 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: var(--font-manrope), system-ui, sans-serif;
+    font-family: var(--font-gellix), system-ui, sans-serif;
     min-height: 100%;
     overscroll-behavior-x: none;
   }
@@ -66,8 +73,9 @@
     font-weight: 800;
   }
 
+  /* Body paragraphs use Gellix (loaded in app/layout.tsx). */
   p {
-    font-family: var(--font-manrope), system-ui, sans-serif;
+    font-family: var(--font-gellix), system-ui, sans-serif;
   }
 }
 

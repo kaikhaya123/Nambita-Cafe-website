@@ -1,36 +1,45 @@
 'use client'
 
+// The customer's shopping cart (browser only).
+//
+// How it works:
+// - The cart is one shared list kept in this file, so every component sees the same cart.
+// - It's saved to localStorage, so it survives page refreshes.
+// - Components read it with the `useCart()` hook. When the cart changes, every component
+//   using `useCart()` re-renders automatically (that's what useSyncExternalStore does).
+
 import { useCallback, useSyncExternalStore } from 'react'
-import type { AddOn, MenuItem, OrderLine } from './menu-data'
+import { lineTotal, parseOrderLine, type AddOn, type MenuItem, type OrderLine } from './menu-data'
 
 const STORAGE_KEY = 'nambita-cart'
 
 let cart: OrderLine[] = []
-let hydrated = false
+let hasLoadedFromStorage = false
 const listeners = new Set<() => void>()
 
 function readStoredCart(): OrderLine[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as OrderLine[]) : []
+    const parsed: unknown = raw ? JSON.parse(raw) : []
+    // Re-check saved lines against the current menu: drops removed items and refreshes prices.
+    return Array.isArray(parsed)
+      ? parsed.map(parseOrderLine).filter((line): line is OrderLine => line !== null)
+      : []
   } catch {
     return []
   }
 }
 
-function persist() {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
-}
-
-function ensureHydrated() {
-  if (hydrated || typeof window === 'undefined') return
+function loadFromStorageOnce() {
+  if (hasLoadedFromStorage || typeof window === 'undefined') return
   cart = readStoredCart()
-  hydrated = true
+  hasLoadedFromStorage = true
 }
 
+// Replace the cart, save it, and tell every component using useCart() to re-render.
 function setCart(next: OrderLine[]) {
   cart = next
-  persist()
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
   listeners.forEach((listener) => listener())
 }
 
@@ -40,19 +49,16 @@ function subscribe(listener: () => void) {
 }
 
 function getSnapshot() {
-  ensureHydrated()
+  loadFromStorageOnce()
   return cart
 }
 
+// On the server there's no localStorage, so the cart always starts empty.
 function getServerSnapshot() {
   return cart
 }
 
-export function lineTotal(line: OrderLine) {
-  const addOnsTotal = line.addOns.reduce((sum, addOn) => sum + addOn.price, 0)
-  return (line.item.price + addOnsTotal) * line.quantity
-}
-
+/** Total price of every line in the cart. */
 export function cartSubtotal(cartLines: OrderLine[]) {
   return cartLines.reduce((sum, line) => sum + lineTotal(line), 0)
 }
@@ -70,5 +76,7 @@ export function useCart() {
 
   const clearCart = useCallback(() => setCart([]), [])
 
-  return { cart: currentCart, addToCart, removeFromCart, clearCart, isHydrated: hydrated }
+  // isHydrated: true once the saved cart has been loaded. Before that, an empty cart
+  // might just mean "not loaded yet", so pages shouldn't say "your cart is empty".
+  return { cart: currentCart, addToCart, removeFromCart, clearCart, isHydrated: hasLoadedFromStorage }
 }
