@@ -1,7 +1,10 @@
+// POST /api/webhooks/yoco — Yoco calls this (not the browser) after a payment succeeds or fails.
+// We check Yoco's signature so nobody can fake a "paid" message, update the order, and email the receipt.
+
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
-import { sendOrderReceiptEmail, type OrderForReceipt } from '@/lib/email/order-receipt'
+import { sendOrderReceiptEmail, type OrderForReceipt } from '@/lib/email/order-emails'
 
 const YOCO_WEBHOOK_SECRET = process.env.YOCO_WEBHOOK_SECRET
 
@@ -53,9 +56,10 @@ export async function POST(request: NextRequest) {
     payload?: { metadata?: { orderNumber?: string } } & Record<string, unknown>
   }
 
-  console.log('Yoco webhook received:', event.type, JSON.stringify(event.payload))
-
   const orderNumber = event.payload?.metadata?.orderNumber
+
+  // Log only what's needed to trace an order; the payload holds customer details.
+  console.log('Yoco webhook received:', event.type, orderNumber ?? '(no order number)')
 
   let status: 'paid' | 'failed' | null = null
   if (event.type?.includes('succeeded')) status = 'paid'
@@ -64,15 +68,23 @@ export async function POST(request: NextRequest) {
   if (orderNumber && status) {
     const supabase = getSupabaseAdmin()
 
+    // Conditional updates make retries and out-of-order events harmless:
+    // - "paid" only changes a row that isn't paid yet, so the receipt goes out once.
+    // - "failed" only changes a pending order, so it can't undo a payment.
+    let changed: boolean
     try {
-      const { error } = await supabase.from('orders').update({ status }).eq('order_number', orderNumber)
+      const query = supabase.from('orders').update({ status }).eq('order_number', orderNumber)
+      const { data, error } = await (status === 'paid' ? query.neq('status', 'paid') : query.eq('status', 'pending')).select(
+        'order_number'
+      )
       if (error) throw error
+      changed = (data ?? []).length > 0
     } catch (error) {
       console.error('Failed to update order status from webhook', error)
       return NextResponse.json({ error: 'Failed to update order' }, { status: 500 })
     }
 
-    if (status === 'paid') {
+    if (status === 'paid' && changed) {
       try {
         const { data: order, error } = await supabase
           .from('orders')

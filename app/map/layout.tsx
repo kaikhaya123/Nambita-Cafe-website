@@ -1,3 +1,5 @@
+// SEO title/description for the Locations page (/map).
+
 import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 

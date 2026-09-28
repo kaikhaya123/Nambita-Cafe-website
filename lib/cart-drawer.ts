@@ -1,5 +1,7 @@
 'use client'
 
+// Tiny shared on/off switch for the cart drawer, so any component can open or close it.
+
 import { useSyncExternalStore } from 'react'
 
 let isOpen = false

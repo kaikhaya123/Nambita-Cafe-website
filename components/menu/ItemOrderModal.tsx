@@ -1,9 +1,11 @@
 'use client'
 
+// Pop-up for one menu item: bigger photo, description, quantity picker and "Add to Order".
+
 import { useState } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { MenuItem } from '@/lib/menu-data'
+import { MAX_LINE_QUANTITY, type MenuItem } from '@/lib/menu-data'
 
 interface ItemOrderModalProps {
   item: MenuItem
@@ -73,7 +75,7 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
                 <button
                   type="button"
                   aria-label="Increase quantity"
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => setQuantity((q) => Math.min(MAX_LINE_QUANTITY, q + 1))}
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-black/20 text-lg text-black-900"
                 >
                   +
@@ -84,7 +86,7 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
             <button
               type="button"
               onClick={handleAdd}
-              className="mt-6 flex w-full items-center justify-between rounded-full bg-[#FFFF00] px-6 py-4 font-dm-sans text-sm uppercase tracking-[0.12em] text-black-900"
+              className="mt-6 flex w-full items-center justify-between rounded-full bg-brand-yellow px-6 py-4 font-teko font-bold uppercase tracking-[0.05em] text-xl text-black-900"
             >
               <span>Add to Order</span>
               <span className="font-bold">R{total.toFixed(2)}</span>

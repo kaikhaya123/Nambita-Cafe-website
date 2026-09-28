@@ -1,3 +1,5 @@
+// Root layout: wraps every page. Loads the fonts, sets default SEO tags, and shows the Navbar.
+
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { Cormorant_Garamond, DM_Sans, Manrope, Teko } from 'next/font/google'
@@ -26,6 +28,35 @@ const cityBold = localFont({
     },
   ],
   variable: '--font-city-bold',
+  display: 'swap',
+})
+
+// Brush-script font for the "#I Love Nambita" headline (use the `font-lucy` class).
+// Licence: free for PERSONAL use only. The live cafe site needs a commercial licence
+// from Billy Argel Fonts (billyargel.com / billyargel@gmail.com).
+const lucySaidOk = localFont({
+  src: [
+    {
+      path: '../public/Font/Hagrid font/Lucy Said Ok Personal Use.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-lucy',
+  display: 'swap',
+})
+
+// Gellix: the body text font for paragraphs across the site (Tailwind `font-sans`).
+// Only the weights we use are loaded, to keep the download small.
+// Licence: this is the TRIAL / personal-use version. The live site needs a commercial licence.
+const gellix = localFont({
+  src: [
+    { path: '../public/Font/Hagrid font/gellix-font-family/Gellix-TRIAL-Regular.otf', weight: '400', style: 'normal' },
+    { path: '../public/Font/Hagrid font/gellix-font-family/Gellix-TRIAL-Medium.otf', weight: '500', style: 'normal' },
+    { path: '../public/Font/Hagrid font/gellix-font-family/Gellix-TRIAL-SemiBold.otf', weight: '600', style: 'normal' },
+    { path: '../public/Font/Hagrid font/gellix-font-family/Gellix-TRIAL-Bold.otf', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-gellix',
   display: 'swap',
 })
 
@@ -97,16 +128,11 @@ const restaurantSchema = {
   menu: `${seoConfig.siteUrl}/menu`,
   servesCuisine: ['Cafe', 'Sandwich', 'Coffee', 'Smoothie'],
   priceRange: 'R13-R56',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: 4.5,
-    reviewCount: 42,
-  },
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${hagrid.variable} ${ncSerif.variable} ${cityBold.variable} ${dmSans.variable} ${teko.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${hagrid.variable} ${ncSerif.variable} ${cityBold.variable} ${lucySaidOk.variable} ${gellix.variable} ${dmSans.variable} ${teko.variable}`}>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <script
           type="application/ld+json"

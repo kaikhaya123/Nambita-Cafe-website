@@ -1,3 +1,5 @@
+// SEO title/description for the About page (/about).
+
 import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 

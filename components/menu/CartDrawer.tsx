@@ -3,14 +3,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
-import { lineTotal, useCart } from '@/lib/cart'
+import { cartSubtotal, useCart } from '@/lib/cart'
 import { closeCartDrawer, useCartDrawerOpen } from '@/lib/cart-drawer'
+import { lineTotal } from '@/lib/menu-data'
 
+// The slide-in "Your Order" panel. Opened from the navbar cart icon or after adding an item.
 export default function CartDrawer() {
   const { cart, removeFromCart, clearCart } = useCart()
   const isOpen = useCartDrawerOpen()
 
-  const subtotal = cart.reduce((sum, line) => sum + lineTotal(line), 0)
+  const subtotal = cartSubtotal(cart)
   const orderTotal = subtotal
 
   return (
@@ -53,7 +55,7 @@ export default function CartDrawer() {
                   <div className="flex flex-1 flex-col divide-y divide-black/10 overflow-y-auto p-5">
                     {cart.map((line) => (
                       <div key={line.key} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[#F4EFD8]">
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-brand-cream">
                           <Image src={line.item.image} alt={line.item.name} fill sizes="56px" className="object-cover" />
                         </div>
                         <div className="flex flex-1 items-start justify-between gap-3">
@@ -99,14 +101,14 @@ export default function CartDrawer() {
                     <Link
                       href="/checkout"
                       onClick={closeCartDrawer}
-                      className="mt-4 flex w-full items-center justify-center rounded-full bg-black-900 py-3 font-dm-sans text-xs uppercase tracking-[0.12em] text-white"
+                      className="mt-4 flex w-full items-center justify-center rounded-full bg-black-900 py-3 font-teko font-bold uppercase tracking-[0.05em] text-lg text-white"
                     >
                       Checkout
                     </Link>
                     <button
                       type="button"
                       onClick={clearCart}
-                      className="mt-3 w-full rounded-full border border-black/20 py-3 font-dm-sans text-xs uppercase tracking-[0.12em] text-black-900"
+                      className="mt-3 w-full rounded-full border border-black/20 py-3 font-teko font-bold uppercase tracking-[0.05em] text-lg text-black-900"
                     >
                       Clear Order
                     </button>

@@ -1,3 +1,5 @@
+// SEO title/description for the Menu page (/menu).
+
 import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 
