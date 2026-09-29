@@ -45,9 +45,9 @@ export default function CartDrawer() {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               onClick={(event) => event.stopPropagation()}
             >
-              {/* Header: logo on top, "Your Order" underneath, both centred across the full panel width.
-                  The close button is pinned to the top-right corner (absolute) so it doesn't push them off-centre. */}
-              <div className="relative flex flex-col items-center gap-2 border-b border-black/10 px-5 pb-4 pt-5 text-center">
+              {/* Header: just the logo, centred across the full panel width.
+                  The close button is pinned to the top-right corner (absolute) so it doesn't push the logo off-centre. */}
+              <div className="relative flex flex-col items-center px-5 pb-4 pt-5 text-center">
                 <Image
                   src="/logo/NAMBITA Logo/NambitaL2.png"
                   alt="Nambita Cafe"
@@ -56,7 +56,8 @@ export default function CartDrawer() {
                   sizes="140px"
                   className="h-14 w-auto object-contain sm:h-16"
                 />
-                <h3 className="font-teko text-2xl uppercase leading-none tracking-[0.03em] text-black-900">Your Order</h3>
+                {/* Hidden on screen (`sr-only`), but screen readers still announce this panel as "Your Order". */}
+                <h3 className="sr-only">Your Order</h3>
                 <button
                   type="button"
                   aria-label="Close"
@@ -72,6 +73,15 @@ export default function CartDrawer() {
 
               {cart.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center gap-2 p-5 text-center">
+                  {/* Empty-basket picture above the message; alt="" because the text below already says it. */}
+                  <Image
+                    src="/Icons/empty-cart.png"
+                    alt=""
+                    width={160}
+                    height={160}
+                    sizes="160px"
+                    className="mb-4 h-32 w-32 object-contain sm:h-40 sm:w-40"
+                  />
                   <p className="font-teko text-xl uppercase tracking-[0.05em] text-black-900">Your cart is empty</p>
                   <p className="text-sm text-black-900/70">Add something tasty from the menu.</p>
                 </div>
