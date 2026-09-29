@@ -45,7 +45,8 @@ export default function NambitaCafeMenuPage() {
     <div className="min-h-screen bg-brand-offwhite text-black-900 [&_h1]:font-teko [&_h2]:font-teko [&_h3]:font-teko [&_h4]:font-teko [&_h5]:font-teko [&_h6]:font-teko">
 
       {/* MENU ITEMS — all categories stacked, per-item stagger */}
-      <section className="border-b border-black bg-brand-offwhite py-14 sm:py-16 md:py-24">
+      {/* No top padding, so the first black category bar sits right under the navbar. */}
+      <section className="border-b border-black bg-brand-offwhite pb-14 sm:pb-16 md:pb-24">
         <div className="mx-auto w-full px-4 sm:px-5 lg:px-10">
           {menuSections.map((section) => (
             <MenuSection
