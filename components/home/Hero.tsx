@@ -65,7 +65,7 @@ export default function HomeHero() {
 
       <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-start justify-end px-5 pb-14 text-left sm:px-8 sm:pb-16 lg:px-12 lg:pb-20">
         {/* Brush-script font: no uppercase or letter-spacing, which would break up the script letters. */}
-        <h2 className="m-0 font-lucy font-normal text-white leading-[1.08] text-[2.4rem] drop-shadow-[0_6px_18px_rgba(0,0,0,0.5)] sm:text-6xl md:text-7xl">
+        <h2 className="m-0 font-lucy font-normal text-white leading-[1.08] text-[2.25rem] drop-shadow-[0_6px_18px_rgba(0,0,0,0.5)] sm:text-5xl md:text-6xl">
           {['#I', 'Love', 'Nambita '].map((word, i) => (
             <span key={word} className="inline-block overflow-hidden">
               <motion.span

@@ -57,29 +57,29 @@ export const menuSections: MenuSection[] = [
         name: '4 WINGS + FRIES',
         description: '4 crumbed or flame-grilled wings served with a side of fries.',
         price: 65,
-        image: '/Images/Wings.jpg',
+        image: '/Images/menu/wings.jpg',
       },
       {
         id: 'wings-6-fries',
         name: '6 WINGS + FRIES',
         description: '6 crumbed or flame-grilled wings served with a side of fries.',
         price: 85,
-        image: '/Images/Wings_Combo.png',
+        image: '/Images/menu/wings-combo.png',
       },
     ],
   },
   {
     title: 'Drinks',
     items: [
-      { id: 'smoothie', name: 'SMOOTHIE', description: 'Freshly blended smoothie, cold and refreshing.', price: 45, image: '/Images/Smoothie.jpeg' },
-      { id: 'iced-coffee', name: 'ICED COFFEE', description: 'Cold coffee over ice for a fresh pick-me-up.', price: 45, image: '/Images/ChatGPT Image Jul 13, 2026, 04_26_07 PM-Photoroom.png' },
-      { id: 'coke', name: 'COKE', description: 'Classic chilled coke served cold.', price: 15, image: '/Images/Cold-drinks.png' },
+      { id: 'smoothie', name: 'SMOOTHIE', description: 'Freshly blended smoothie, cold and refreshing.', price: 45, image: '/Images/menu/smoothie.jpg' },
+      { id: 'iced-coffee', name: 'ICED COFFEE', description: 'Cold coffee over ice for a fresh pick-me-up.', price: 45, image: '/Images/menu/iced-coffee.png' },
+      { id: 'coke', name: 'COKE', description: 'Classic chilled coke served cold.', price: 15, image: '/Images/menu/cold-drinks.png' },
     ],
   },
   {
     title: 'Sides',
     items: [
-      { id: 'fried-chips', name: 'FRIED CHIPS', description: 'Golden, crispy fried chips.', price: 20, image: '/Images/pngegg.png' },
+      { id: 'fried-chips', name: 'FRIED CHIPS', description: 'Golden, crispy fried chips.', price: 20, image: '/Images/menu/fried-chips.png' },
     ],
   },
 ]

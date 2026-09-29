@@ -131,7 +131,7 @@ export default function DetailsStep({
         <button
           type="submit"
           disabled={!isValid}
-          className="w-full rounded-full bg-black-900 py-4 font-teko font-bold uppercase tracking-[0.05em] text-xl text-white disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn w-full bg-black-900 text-white"
         >
           Continue to Review
         </button>

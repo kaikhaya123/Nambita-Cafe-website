@@ -29,7 +29,7 @@ export default function AboutTeaser() {
             transition={motionSettings.medium}
             className="max-w-3xl text-left"
           >
-            <h1 className="mt-0 text-3xl font-teko uppercase tracking-[0.01em] text-white sm:text-4xl md:text-5xl">
+            <h1 className="mt-0 text-3xl font-teko uppercase tracking-[0.01em] text-white sm:text-4xl">
               {['THE', 'CAFE', 'THAT', 'GREW', 'AROUND', 'THE', 'ROOTS', 'OF', 'SLAQA', 'SALON.'].map((word, wi, words) => {
                 const charOffset = words.slice(0, wi).reduce((sum, w) => sum + w.length + 1, 0)
                 return (
@@ -67,9 +67,9 @@ export default function AboutTeaser() {
               <motion.a
                 href="/about"
                 whileHover={{ y: -2, scale: 1.02 }}
-                className="group relative z-10 inline-flex items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-lg font-semibold uppercase text-black-900 shadow-xl transition duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-black-900"
+                className="btn group relative z-10 gap-3 bg-white pr-2 text-black-900 shadow-xl transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-black-900"
               >
-                <span className="relative font-teko font-bold uppercase tracking-[0.05em] text-2xl leading-none">About Nambita Cafe</span>
+                <span className="relative">About Nambita Cafe</span>
                 <svg
                   className="relative h-8 w-8 rotate-45 rounded-full border border-black-900 bg-white p-2 transition duration-300 ease-linear group-hover:rotate-90"
                   viewBox="0 0 16 19"
