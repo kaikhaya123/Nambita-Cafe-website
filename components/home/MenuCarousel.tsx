@@ -97,7 +97,6 @@ export default function MenuCarousel() {
                 {item.title}
               </h3>
               <div className="relative mx-auto mt-6 h-44 w-44 sm:h-56 sm:w-56">
-                <div className="pointer-events-none absolute bottom-1 left-1/2 h-4 w-3/4 -translate-x-1/2 rounded-[50%] bg-black-900 blur-md" />
                 {'images' in item ? (
                   <FadingImage
                     images={item.images}

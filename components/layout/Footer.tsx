@@ -17,83 +17,77 @@ const socialLinks = [
   { name: 'TikTok', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/tik-tok (1).webp' },
 ]
 
+// Every column heading and list shares these styles, so the columns line up and look the same.
+const headingClass = 'font-hagrid text-sm uppercase tracking-[0.14em] text-white'
+const linkClass = 'font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel'
+
 export default function Footer() {
   return (
-    <footer id="footer-contact" className="relative text-white">
-      <div className="w-full bg-black-900 px-6 py-10 sm:px-10 sm:py-12">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-4">
-          <div className="flex justify-center lg:justify-start">
-            <Image
-              src="/logo/NAMBITA Logo/NambitaL4.webp"
-              alt="Nambita Cafe logo"
-              width={140}
-              height={140}
-              className="h-auto w-28 object-contain sm:w-32"
-            />
-          </div>
+    <footer id="footer-contact" className="relative bg-black-900 text-white">
+      {/* Layout: phone = one column, tablet = logo on its own row then 3 columns,
+          desktop = logo + 3 columns in one row, with the logo as tall as the tallest column ("Visit Us"). */}
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-3 sm:px-10 lg:grid-cols-[auto_1fr_1fr_1fr] lg:gap-12">
+        <div className="sm:col-span-3 lg:col-span-1">
+          {/* NambitaL4-trim.webp is the logo with its empty border cut off, so its height is the real logo height. */}
+          <Image
+            src="/logo/NAMBITA Logo/NambitaL4-trim.webp"
+            alt="Nambita Cafe logo"
+            width={1665}
+            height={735}
+            sizes="(min-width: 1280px) 430px, 340px"
+            className="h-24 w-auto object-contain sm:h-28 lg:h-[150px] xl:h-[188px]"
+          />
+        </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-3">
-            <div>
-              <p className="font-hagrid text-sm uppercase tracking-[0.14em] text-white">Explore</p>
-              <ul className="mt-4 space-y-3">
-                {exploreLinks.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div>
+          <p className={headingClass}>Explore</p>
+          <ul className="mt-4 space-y-3">
+            {exploreLinks.map((link) => (
+              <li key={link.name}>
+                <Link href={link.href} className={linkClass}>
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-            <div>
-              <p className="font-hagrid text-sm uppercase tracking-[0.14em] text-white">Visit Us</p>
-              <ul className="mt-4 space-y-4">
-                {cafeLocations.map((location) => (
-                  <li key={location.id}>
-                    <a
-                      href={directionsHref(location)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel"
-                    >
-                      <span className="block font-dm-sans-bold text-white/90 group-hover:text-brand-caramel">{location.name}</span>
-                      {location.addressLine1}, {location.addressLine2}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div>
+          <p className={headingClass}>Visit Us</p>
+          <ul className="mt-4 space-y-4">
+            {cafeLocations.map((location) => (
+              <li key={location.id}>
+                {/* Branch name on its own line, then the address split over two short lines. */}
+                <a href={directionsHref(location)} target="_blank" rel="noreferrer" className={`group block leading-relaxed ${linkClass}`}>
+                  <span className="block font-dm-sans-bold text-white group-hover:text-brand-caramel">{location.name}</span>
+                  <span className="block">{location.addressLine1}</span>
+                  <span className="block">{location.addressLine2}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-            <div className="col-span-2 sm:col-span-1">
-              <p className="font-hagrid text-sm uppercase tracking-[0.14em] text-white">Social Media</p>
-              <ul className="mt-4 space-y-3">
-                {socialLinks.map((social) => (
-                  <li key={social.name}>
-                    <a
-                      href={social.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-2 font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel"
-                    >
-                      <Image src={social.icon} alt="" width={16} height={16} aria-hidden="true" className="h-4 w-4 object-contain" />
-                      {social.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+        <div>
+          <p className={headingClass}>Social Media</p>
+          <ul className="mt-4 space-y-3">
+            {socialLinks.map((social) => (
+              <li key={social.name}>
+                <a href={social.href} target="_blank" rel="noreferrer" className={`flex items-center gap-2 ${linkClass}`}>
+                  <Image src={social.icon} alt="" width={16} height={16} aria-hidden="true" className="h-4 w-4 object-contain" />
+                  {social.name}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      <div className="mt-0 w-full border-t border-white/15 bg-white/10 px-6 py-6 backdrop-blur-sm sm:px-8">
-        <div className="flex flex-col items-center justify-center gap-6 text-center">
-          <p className="text-xs tracking-[0.02em] text-black-900 sm:text-sm">© 2026 Nambita Cafe. All rights reserved.</p>
-        </div>
+      {/* Copyright strip. Extra bottom padding below `lg` so the fixed yellow "Order Now" bar doesn't cover it. */}
+      <div className="px-6 pb-24 pt-6 sm:px-10 lg:pb-6">
+        <p className="mx-auto max-w-7xl text-center text-xs tracking-[0.02em] text-white sm:text-sm">
+          © 2026 Nambita Cafe. All rights reserved.
+        </p>
       </div>
     </footer>
   )
