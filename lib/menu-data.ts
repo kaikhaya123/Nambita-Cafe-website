@@ -45,7 +45,7 @@ export const menuSections: MenuSection[] = [
         name: 'WORS ROLL COMBO',
         description: 'Grilled boerewors in a fresh roll with red onions, served with chips and a drink.',
         price: 55,
-        image: '/Images/menu/wors-roll-combo.jpg',
+        image: '/Images/Remove Logo from Image-Photoroom.png',
       },
     ],
   },
@@ -71,9 +71,9 @@ export const menuSections: MenuSection[] = [
   {
     title: 'Drinks',
     items: [
-      { id: 'smoothie', name: 'SMOOTHIE', description: 'Freshly blended smoothie, cold and refreshing.', price: 45, image: '/Images/menu/smoothie.jpg' },
-      { id: 'iced-coffee', name: 'ICED COFFEE', description: 'Cold coffee over ice for a fresh pick-me-up.', price: 45, image: '/Images/menu/iced-coffee.png' },
-      { id: 'coke', name: 'COKE', description: 'Classic chilled coke served cold.', price: 15, image: '/Images/menu/cold-drinks.png' },
+      { id: 'smoothie', name: 'SMOOTHIE', description: 'Freshly blended smoothie, cold and refreshing.', price: 55, image: '/Images/ChatGPT Image Jul 13, 2026, 04_12_00 PM-Photoroom.png' },
+      { id: 'iced-coffee', name: 'ICED COFFEE', description: 'Cold coffee over ice for a fresh pick-me-up.', price: 35, image: '/Images/ChatGPT Image Jul 13, 2026, 04_26_07 PM-Photoroom.png' },
+      { id: 'coke', name: 'COKE', description: 'Classic chilled coke served cold.', price: 15, image: '/Images/pngwing.com (1).png' },
     ],
   },
   {
