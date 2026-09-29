@@ -27,7 +27,7 @@ export default function AddedToCartToast({ itemName, onView }: AddedToCartToastP
             <button
               type="button"
               onClick={onView}
-              className="whitespace-nowrap rounded-full bg-brand-yellow px-3 py-1.5 font-teko font-bold uppercase tracking-[0.05em] text-base text-black-900 sm:text-lg"
+              className="btn btn-sm whitespace-nowrap bg-brand-yellow text-black-900"
             >
               View Cart
             </button>

@@ -40,9 +40,10 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="relative aspect-[16/9] w-full bg-white">
-            <Image src={item.image} alt={item.name} fill sizes="(max-width: 640px) 100vw, 512px" className="object-cover" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative aspect-[4/3] w-full bg-white">
+            <div className="absolute inset-6">
+              <Image src={item.image} alt={item.name} fill sizes="(max-width: 640px) 100vw, 512px" className="object-contain" />
+            </div>
             <button
               type="button"
               aria-label="Close"
@@ -55,8 +56,8 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
 
           <div className="p-5 sm:p-6">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="font-teko text-2xl uppercase tracking-[0.03em] text-black-900 sm:text-3xl">{item.name}</h3>
-              <p className="whitespace-nowrap font-teko text-2xl font-black text-black-900 sm:text-3xl">R{item.price.toFixed(2)}</p>
+              <h3 className="font-teko text-2xl uppercase tracking-[0.03em] text-black-900">{item.name}</h3>
+              <p className="whitespace-nowrap font-teko text-2xl font-black text-black-900">R{item.price.toFixed(2)}</p>
             </div>
             <p className="mt-2 text-sm leading-relaxed text-black-900/80 sm:text-base">{item.description}</p>
 
@@ -67,7 +68,7 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
                   type="button"
                   aria-label="Decrease quantity"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/20 text-lg text-black-900"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/20 text-lg text-black-900"
                 >
                   −
                 </button>
@@ -76,7 +77,7 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
                   type="button"
                   aria-label="Increase quantity"
                   onClick={() => setQuantity((q) => Math.min(MAX_LINE_QUANTITY, q + 1))}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/20 text-lg text-black-900"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/20 text-lg text-black-900"
                 >
                   +
                 </button>
@@ -86,10 +87,10 @@ export default function ItemOrderModal({ item, onClose, onAdd }: ItemOrderModalP
             <button
               type="button"
               onClick={handleAdd}
-              className="mt-6 flex w-full items-center justify-between rounded-full bg-brand-yellow px-6 py-4 font-teko font-bold uppercase tracking-[0.05em] text-xl text-black-900"
+              className="btn mt-6 flex w-full justify-between bg-brand-yellow text-black-900"
             >
               <span>Add to Order</span>
-              <span className="font-bold">R{total.toFixed(2)}</span>
+              <span>R{total.toFixed(2)}</span>
             </button>
           </div>
         </motion.div>

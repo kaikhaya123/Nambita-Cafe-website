@@ -43,7 +43,7 @@ export default function FindLocationPrompt({
         type="button"
         onClick={onShareLocation}
         disabled={geoStatus === 'loading'}
-        className="mt-7 inline-flex items-center justify-center rounded-full bg-brand-green px-8 py-3 font-teko font-bold uppercase tracking-[0.05em] text-xl text-white transition-colors duration-200 hover:bg-brand-caramel disabled:opacity-60"
+        className="btn mt-7 px-8 bg-brand-green text-white hover:bg-brand-caramel"
       >
         {geoStatus === 'loading' ? 'Locating…' : 'Share Location'}
       </button>

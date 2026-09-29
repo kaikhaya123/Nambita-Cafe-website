@@ -69,7 +69,7 @@ export default function StoryHighlights() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.55, ease: 'easeOut', delay: 0.2 + index * 0.1 }}
-              className="max-w-[62ch] text-[0.95rem] leading-7 text-black-900 sm:text-base sm:leading-8 md:text-lg"
+              className="max-w-[62ch] text-[0.95rem] leading-7 text-black-900 sm:text-base sm:leading-8"
             >
               {item.copy}
             </motion.p>

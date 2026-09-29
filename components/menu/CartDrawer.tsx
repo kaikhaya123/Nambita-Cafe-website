@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect } from 'react'
 import { cartSubtotal, useCart } from '@/lib/cart'
 import { closeCartDrawer, useCartDrawerOpen } from '@/lib/cart-drawer'
 import { lineTotal } from '@/lib/menu-data'
@@ -11,6 +12,16 @@ import { lineTotal } from '@/lib/menu-data'
 export default function CartDrawer() {
   const { cart, removeFromCart, clearCart } = useCart()
   const isOpen = useCartDrawerOpen()
+
+  // While the cart is open it covers the whole screen, so stop the page behind it from scrolling.
+  useEffect(() => {
+    if (!isOpen) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [isOpen])
 
   const subtotal = cartSubtotal(cart)
   const orderTotal = subtotal
@@ -25,23 +36,37 @@ export default function CartDrawer() {
             exit={{ opacity: 0 }}
             onClick={closeCartDrawer}
           >
+            {/* Full screen on every device, so the cart covers the whole page while it's open. */}
             <motion.div
-              className="flex h-full w-full max-w-md flex-col bg-white sm:max-w-lg"
+              className="flex h-full w-full flex-col bg-white"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-black/10 p-5">
-                <h3 className="font-teko text-2xl uppercase tracking-[0.03em] text-black-900">Your Order</h3>
+              {/* Header: logo on top, "Your Order" underneath, both centred across the full panel width.
+                  The close button is pinned to the top-right corner (absolute) so it doesn't push them off-centre. */}
+              <div className="relative flex flex-col items-center gap-2 border-b border-black/10 px-5 pb-4 pt-5 text-center">
+                <Image
+                  src="/logo/NAMBITA Logo/NambitaL2.png"
+                  alt="Nambita Cafe"
+                  width={140}
+                  height={71}
+                  sizes="140px"
+                  className="h-14 w-auto object-contain sm:h-16"
+                />
+                <h3 className="font-teko text-2xl uppercase leading-none tracking-[0.03em] text-black-900">Your Order</h3>
                 <button
                   type="button"
                   aria-label="Close"
                   onClick={closeCartDrawer}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-black-900 text-white"
+                  className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center text-black-900 transition-opacity duration-200 hover:opacity-60"
                 >
-                  &times;
+                  {/* A drawn X (instead of the × character) so the lines can be made thick and bold. */}
+                  <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
                 </button>
               </div>
 
@@ -52,66 +77,71 @@ export default function CartDrawer() {
                 </div>
               ) : (
                 <>
-                  <div className="flex flex-1 flex-col divide-y divide-black/10 overflow-y-auto p-5">
+                  <div className="flex-1 overflow-y-auto overscroll-contain p-5">
+                    {/* Centred column so lines don't stretch across a wide desktop screen. */}
+                    <div className="mx-auto flex w-full max-w-2xl flex-col divide-y divide-black/10">
                     {cart.map((line) => (
-                      <div key={line.key} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-brand-cream">
-                          <Image src={line.item.image} alt={line.item.name} fill sizes="56px" className="object-cover" />
+                      <div key={line.key} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+                        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-black/10 bg-white sm:h-32 sm:w-32">
+                          <Image src={line.item.image} alt={line.item.name} fill sizes="128px" className="object-contain p-2" />
                         </div>
-                        <div className="flex flex-1 items-start justify-between gap-3">
-                          <div>
-                            <p className="font-dm-sans text-sm font-bold uppercase tracking-[0.04em] text-black-900">
+                        <div className="min-w-0 flex-1">
+                          {/* One row: "1 × ITEM NAME" on the left, the price on the right, sharing the same line. */}
+                          <div className="flex items-baseline justify-between gap-3">
+                            <p className="font-dm-sans text-base font-extrabold uppercase leading-snug tracking-[0.03em] text-black-900 sm:text-lg">
                               {line.quantity} × {line.item.name}
                             </p>
-                            {line.addOns.length > 0 && (
-                              <p className="mt-1 text-xs text-black-900/70">
-                                + {line.addOns.map((addOn) => addOn.name).join(', ')}
-                              </p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="whitespace-nowrap font-dm-sans text-sm font-bold text-black-900">
+                            <span className="shrink-0 whitespace-nowrap font-dm-sans text-base font-extrabold text-black-900 sm:text-lg">
                               R{lineTotal(line).toFixed(2)}
                             </span>
-                            <button
-                              type="button"
-                              aria-label={`Remove ${line.item.name}`}
-                              onClick={() => removeFromCart(line.key)}
-                              className="text-xs uppercase tracking-[0.08em] text-black-900/50 underline"
-                            >
-                              Remove
-                            </button>
                           </div>
+                          {line.addOns.length > 0 && (
+                            <p className="mt-1 text-xs text-black-900/70">
+                              + {line.addOns.map((addOn) => addOn.name).join(', ')}
+                            </p>
+                          )}
+                          <button
+                            type="button"
+                            aria-label={`Remove ${line.item.name}`}
+                            onClick={() => removeFromCart(line.key)}
+                            className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-black-900 underline transition-opacity duration-200 hover:opacity-60"
+                          >
+                            Remove
+                          </button>
                         </div>
                       </div>
                     ))}
+                    </div>
                   </div>
 
                   <div className="border-t border-black/10 p-5">
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between font-dm-sans text-sm text-black-900/70">
-                        <span>Subtotal</span>
-                        <span>R{subtotal.toFixed(2)}</span>
-                      </div>
+                    <div className="mx-auto w-full max-w-2xl">
+                    {/* Subtotal and Total share one layout: label on the left, amount on the right, same font as
+                        the item lines. Total is one step bigger and bolder so it stands out. `tabular-nums`
+                        gives every digit the same width, so the two amounts line up under each other. */}
+                    <div className="flex items-baseline justify-between font-dm-sans text-base uppercase tracking-[0.03em] text-black-900/70">
+                      <span>Subtotal</span>
+                      <span className="tabular-nums">R{subtotal.toFixed(2)}</span>
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-black/10 pt-3">
-                      <span className="font-teko text-xl uppercase tracking-[0.05em] text-black-900">Total</span>
-                      <span className="font-teko text-2xl font-black text-black-900">R{orderTotal.toFixed(2)}</span>
+                    <div className="mt-3 flex items-baseline justify-between border-t border-black/10 pt-3 font-dm-sans text-lg font-extrabold uppercase tracking-[0.03em] text-black-900 sm:text-xl">
+                      <span>Total</span>
+                      <span className="tabular-nums">R{orderTotal.toFixed(2)}</span>
                     </div>
                     <Link
                       href="/checkout"
                       onClick={closeCartDrawer}
-                      className="mt-4 flex w-full items-center justify-center rounded-full bg-black-900 py-3 font-teko font-bold uppercase tracking-[0.05em] text-lg text-white"
+                      className="btn mt-4 flex w-full bg-black-900 text-white"
                     >
                       Checkout
                     </Link>
                     <button
                       type="button"
                       onClick={clearCart}
-                      className="mt-3 w-full rounded-full border border-black/20 py-3 font-teko font-bold uppercase tracking-[0.05em] text-lg text-black-900"
+                      className="btn mt-3 w-full border border-black/20 text-black-900"
                     >
                       Clear Order
                     </button>
+                    </div>
                   </div>
                 </>
               )}

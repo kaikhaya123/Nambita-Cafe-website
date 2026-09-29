@@ -38,7 +38,7 @@ export default function CheckoutSuccessContent() {
       </p>
       <Link
         href="/menu"
-        className="mt-4 inline-flex items-center rounded-full bg-black-900 px-6 py-3 font-teko font-bold uppercase tracking-[0.05em] text-lg text-white"
+        className="btn mt-4 bg-black-900 text-white"
       >
         Back to Menu
       </Link>

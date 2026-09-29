@@ -9,7 +9,7 @@ export default function EmptyCart() {
       <p className="max-w-sm text-sm text-black-900/70">Add something from the menu before heading to checkout.</p>
       <Link
         href="/menu"
-        className="mt-2 inline-flex items-center rounded-full bg-black-900 px-6 py-3 font-teko font-bold uppercase tracking-[0.05em] text-lg text-white"
+        className="btn mt-2 bg-black-900 text-white"
       >
         Back to Menu
       </Link>

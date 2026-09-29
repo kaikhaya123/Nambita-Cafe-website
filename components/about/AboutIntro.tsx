@@ -33,10 +33,10 @@ export default function AboutIntro() {
                 sizes="(max-width: 640px) 160px, 176px"
               />
             </motion.div>
-            <h2 className="font-teko border-outline mb-4 text-[1.72rem] leading-tight uppercase tracking-[0.05em] text-black-900 sm:text-4xl sm:tracking-[0.06em] md:text-5xl">
+            <h2 className="font-teko border-outline mb-4 text-[1.72rem] leading-tight uppercase tracking-[0.05em] text-black-900 sm:text-4xl sm:tracking-[0.06em]">
               About Nambita Cafe
             </h2>
-            <p className="mx-auto max-w-2xl font-sans text-[0.95rem] leading-7 text-black-900 sm:text-base sm:leading-8 md:text-lg">
+            <p className="mx-auto max-w-2xl font-sans text-[0.95rem] leading-7 text-black-900 sm:text-base sm:leading-8">
               Nambita Cafe was created as a welcoming space for Slaqa Salon clients and the wider community to enjoy quality refreshments and casual bites in a relaxed setting. What began as a simple refreshment corner has grown into a full-service cafe with its own identity, serving freshly brewed coffee, fruit smoothies, toasted bites, pastries, and chilled drinks for people looking to unwind, grab a quick refresher, or enjoy a warm and inviting stop at our KwaMashu and Waterloo locations.
             </p>
           </div>

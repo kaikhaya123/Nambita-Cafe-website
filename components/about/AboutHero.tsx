@@ -25,7 +25,7 @@ export default function AboutHero() {
       <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center sm:px-8 lg:px-12">
         <div className="max-w-4xl">
           {/* Word-split line-mask reveal */}
-          <h1 className="m-0 font-teko text-center text-brand-yellow uppercase leading-[1.08] tracking-[0.05em] text-[2.1rem] sm:text-5xl sm:tracking-[0.06em] md:text-6xl drop-shadow-[0_6px_18px_rgba(0,0,0,0.5)]">
+          <h1 className="m-0 font-teko text-center text-brand-yellow uppercase leading-[1.08] tracking-[0.05em] text-[2.1rem] sm:text-5xl sm:tracking-[0.06em] drop-shadow-[0_6px_18px_rgba(0,0,0,0.5)]">
             {'About Us'.split(' ').map((word, i) => (
               <span key={i} className="inline-block overflow-hidden">
                 <motion.span
@@ -43,7 +43,7 @@ export default function AboutHero() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease: 'easeOut', delay: 0.46 }}
-            className="mx-auto mt-4 max-w-2xl font-sans text-[0.95rem] leading-6 text-white font-bold sm:text-lg sm:leading-relaxed"
+            className="mx-auto mt-4 max-w-2xl font-sans text-[0.95rem] leading-6 text-white font-bold sm:text-base sm:leading-relaxed"
           >
             Welcome to Nambita Cafe, where every cup tells a story.
           </motion.p>

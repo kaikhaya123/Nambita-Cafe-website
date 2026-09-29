@@ -31,15 +31,17 @@ export default function MenuItemCard({
         onClick={() => onSelect(item)}
         className="block w-full text-left"
       >
+        {/* The whole photo is shown (object-contain), with a small margin so it never touches the card edge. */}
         <div className="relative aspect-square w-full bg-white sm:aspect-[4/3]">
-          <Image
-            src={item.image}
-            alt={item.name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
-          />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
+          <div className="absolute inset-4 sm:inset-5">
+            <Image
+              src={item.image}
+              alt={item.name}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-contain"
+            />
+          </div>
         </div>
         <div className="p-3 pb-1.5 sm:p-3.5 sm:pb-0">
           <h3 className="font-teko text-[0.88rem] sm:text-[0.98rem] uppercase leading-tight tracking-[0.02em] sm:tracking-[0.03em] text-black-900 md:text-[1.05rem] md:tracking-[0.04em]">
@@ -54,7 +56,7 @@ export default function MenuItemCard({
         <button
           type="button"
           onClick={() => onQuickAdd(item)}
-          className="flex w-full items-center justify-center gap-1.5 rounded-full bg-brand-yellow py-2 font-teko font-bold uppercase tracking-[0.05em] text-base sm:text-lg text-black transition-opacity duration-200 hover:opacity-85"
+          className="btn btn-sm flex w-full gap-1.5 bg-brand-yellow text-black transition-opacity hover:opacity-85"
         >
           <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-black-900 text-brand-yellow sm:h-5 sm:w-5">
             <svg viewBox="0 0 24 24" fill="none" className="h-2.5 w-2.5 sm:h-3 sm:w-3" aria-hidden="true">

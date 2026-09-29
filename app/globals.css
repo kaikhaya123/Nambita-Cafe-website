@@ -86,9 +86,18 @@
     font-weight: 700;
   }
 
-  .type-button {
-    @apply text-sm font-black uppercase tracking-[0.09em];
-    font-family: var(--font-manrope), system-ui, sans-serif;
+  /*
+   * One size for every pill button on the public site, so they all match.
+   * Add the colours next to it, e.g. className="btn bg-brand-yellow text-black-900".
+   * 48px tall: easy to tap on a phone without looking oversized on a laptop.
+   */
+  .btn {
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 font-teko text-lg font-bold uppercase leading-none tracking-[0.05em] transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  /* Smaller version (40px tall) for tight spots like menu cards, the toast and the mobile bar. */
+  .btn-sm {
+    @apply h-10 px-4 text-base;
   }
 }
 

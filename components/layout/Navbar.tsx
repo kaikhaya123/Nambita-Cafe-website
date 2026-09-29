@@ -24,7 +24,7 @@ const primaryNavLinks = [
 // Nav links use the same font style as the site headings (Teko, bold, uppercase).
 // Teko is a narrow font, so it needs a bigger size than a normal font to read at the same width.
 const navLinkClass =
-  'font-teko font-bold text-xl uppercase leading-none tracking-[0.05em] text-black-900 transition-opacity duration-200 hover:opacity-60'
+  'font-teko font-bold text-lg uppercase leading-none tracking-[0.05em] text-black-900 transition-opacity duration-200 hover:opacity-60'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -100,7 +100,7 @@ export default function Navbar() {
 
         <Link
           href="/menu"
-          className="hidden items-center rounded-full border border-black-900 bg-black-900 px-4 font-teko font-bold uppercase tracking-[0.05em] text-lg text-white transition-colors duration-200 hover:bg-transparent hover:text-black-900 lg:flex lg:h-14 lg:px-8 lg:text-2xl"
+          className="btn hidden border border-black-900 bg-black-900 text-white hover:bg-transparent hover:text-black-900 lg:inline-flex"
         >
           Order Now
         </Link>
@@ -143,7 +143,7 @@ export default function Navbar() {
                     <Link
                       href={item.href}
                       onClick={() => setIsMenuActive(false)}
-                      className="flex min-h-[52px] items-center font-teko font-bold text-4xl uppercase leading-none tracking-[0.03em] text-black-900 transition-opacity duration-200 hover:opacity-60 sm:text-5xl"
+                      className="flex min-h-[52px] items-center font-teko font-bold text-3xl uppercase leading-none tracking-[0.03em] text-black-900 transition-opacity duration-200 hover:opacity-60 sm:text-4xl"
                     >
                       {item.name}
                     </Link>
@@ -172,7 +172,7 @@ export default function Navbar() {
 
       <Link
         href="/menu"
-        className="inline-flex h-10 items-center rounded-full border border-black-900 bg-black-900 px-4 font-teko font-bold uppercase tracking-[0.05em] text-lg text-white transition-colors duration-200 hover:bg-transparent hover:text-black-900 sm:h-12 sm:px-6 sm:text-xl"
+        className="btn btn-sm border border-black-900 bg-black-900 text-white hover:bg-transparent hover:text-black-900 sm:h-12 sm:px-6 sm:text-lg"
       >
         Order Now
       </Link>

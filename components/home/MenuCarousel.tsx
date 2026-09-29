@@ -93,7 +93,7 @@ export default function MenuCarousel() {
               key={item.title}
               className="group relative z-0 flex h-[390px] w-[240px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-brand-yellow p-6 pb-6 transition-all duration-300 hover:z-10 hover:scale-105 hover:bg- sm:h-[470px] sm:w-[280px]"
             >
-              <h3 className="h-14 font-teko font-uppercase text-2xl uppercase leading-tight tracking-[0.01em] text-black-900 transition-colors duration-300 group-hover:text-black-900 sm:h-16 sm:text-[1.75rem]">
+              <h3 className="h-14 font-teko font-uppercase text-2xl uppercase leading-tight tracking-[0.01em] text-black-900 transition-colors duration-300 group-hover:text-black-900 sm:h-16">
                 {item.title}
               </h3>
               <div className="relative mx-auto mt-6 h-44 w-44 sm:h-56 sm:w-56">
@@ -117,7 +117,7 @@ export default function MenuCarousel() {
               </div>
               <Link
                 href="/menu"
-                className="relative z-10 mx-auto mt-auto flex h-10 min-h-10 items-center gap-2 font-teko font-bold uppercase tracking-[0.05em] text-xl text-black-900 opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
+                className="relative z-10 mx-auto mt-auto flex h-10 min-h-10 items-center gap-2 font-teko font-bold uppercase tracking-[0.05em] text-lg text-black-900 opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
               >
                 Order Now
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
