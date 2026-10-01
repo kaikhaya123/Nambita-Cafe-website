@@ -17,7 +17,6 @@ const findCafeLink = { name: 'Find Nambita Cafe', href: '/map' } as const
 const primaryNavLinks = [
   { name: 'Menu', href: '/menu' },
   { name: 'Our Story', href: '/about' },
-  { name: 'Contact Us', href: '/#footer-contact' },
   findCafeLink
 ] as const
 

@@ -1,4 +1,4 @@
-// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials.
+// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials, contact email.
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,6 +17,8 @@ const socialLinks = [
   { name: 'TikTok', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/tik-tok (1).webp' },
 ]
 
+const contactEmail = 'info@nambitacafe.co.za'
+
 // Every column heading and list shares these styles, so the columns line up and look the same.
 const headingClass = 'font-hagrid text-sm uppercase tracking-[0.14em] text-white'
 const linkClass = 'font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel'
@@ -24,18 +26,19 @@ const linkClass = 'font-dm-sans text-sm text-white/80 transition-colors duration
 export default function Footer() {
   return (
     <footer id="footer-contact" className="relative bg-black-900 text-white">
-      {/* Layout: phone = one column, tablet = logo on its own row then 3 columns,
-          desktop = logo + 3 columns in one row, with the logo as tall as the tallest column ("Visit Us"). */}
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-3 sm:px-10 lg:grid-cols-[auto_1fr_1fr_1fr] lg:gap-12">
-        <div className="sm:col-span-3 lg:col-span-1">
+      {/* Layout: phone = one column, tablet = logo on its own row then 2 × 2 columns,
+          small laptop = logo on its own row then 4 columns,
+          desktop = logo + 4 columns in one row. The logo is kept small so the columns have room to breathe. */}
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-12 sm:grid-cols-2 sm:px-10 lg:grid-cols-4 lg:gap-12 xl:grid-cols-[auto_auto_auto_auto_auto] xl:justify-between xl:gap-10">
+        <div className="sm:col-span-2 lg:col-span-4 xl:col-span-1">
           {/* NambitaL4-trim.webp is the logo with its empty border cut off, so its height is the real logo height. */}
           <Image
             src="/logo/NAMBITA Logo/NambitaL4-trim.webp"
             alt="Nambita Cafe logo"
             width={1665}
             height={735}
-            sizes="(min-width: 1280px) 430px, 340px"
-            className="h-24 w-auto object-contain sm:h-28 lg:h-[150px] xl:h-[188px]"
+            sizes="(min-width: 1280px) 220px, 180px"
+            className="h-16 w-auto object-contain sm:h-20 xl:h-24"
           />
         </div>
 
@@ -53,13 +56,13 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className={headingClass}>Visit Us</p>
-          <ul className="mt-4 space-y-4">
+          <p className={headingClass}>Locations</p>
+          <ul className="mt-4 space-y-6">
             {cafeLocations.map((location) => (
               <li key={location.id}>
                 {/* Branch name on its own line, then the address split over two short lines. */}
                 <a href={directionsHref(location)} target="_blank" rel="noreferrer" className={`group block leading-relaxed ${linkClass}`}>
-                  <span className="block font-dm-sans-bold text-white group-hover:text-brand-caramel">{location.name}</span>
+                  <span className="mb-1 block font-dm-sans-bold text-white group-hover:text-brand-caramel">{location.name}</span>
                   <span className="block">{location.addressLine1}</span>
                   <span className="block">{location.addressLine2}</span>
                 </a>
@@ -79,6 +82,17 @@ export default function Footer() {
                 </a>
               </li>
             ))}
+          </ul>
+        </div>
+
+        <div>
+          <p className={headingClass}>Contact Us</p>
+          <ul className="mt-4 space-y-3">
+            <li>
+              <a href={`mailto:${contactEmail}`} className={linkClass}>
+                {contactEmail}
+              </a>
+            </li>
           </ul>
         </div>
       </div>

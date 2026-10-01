@@ -5,13 +5,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRef } from 'react'
-import FadingImage from '@/components/home/FadingImage'
 
 const menuGridItems = [
   {
     Image: '/Images/Remove Logo from Image-Photoroom-trim.png',
-    ImageAlt: 'Classic Combo',
-    title: 'Classic Combo',
+    ImageAlt: 'Wors Roll Combo',
+    title: 'Wors Roll Combo',
     desc: 'Toasted favourites and filling bites for clients waiting nearby and locals stopping in hungry.',
   },
   {
@@ -27,11 +26,7 @@ const menuGridItems = [
     desc: 'Daily baked treats that pair well with coffee or hot chocolate.',
   },
   {
-    Image: '/Images/Untitled design-Photoroom-trim.png',
-    images: [
-      '/Images/Untitled design-Photoroom-trim.png',
-      '/Images/IMG_2116-Photoroom-trim.png',
-    ],
+    Image: '/Images/IMG_2116-Photoroom-trim.png',
     ImageAlt: 'Smoothies',
     title: 'SMOOTHIES',
     desc: 'Cold fruit blends made for warm Durban afternoons.',
@@ -97,22 +92,14 @@ export default function MenuCarousel() {
                 {item.title}
               </h3>
               <div className="relative mx-auto mt-6 h-44 w-44 sm:h-56 sm:w-56">
-                {'images' in item ? (
-                  <FadingImage
-                    images={item.images}
-                    alt={item.ImageAlt}
-                    className="relative h-full w-full"
-                  />
-                ) : (
-                  <Image
-                    src={item.Image}
-                    alt={item.ImageAlt}
-                    width={200}
-                    height={200}
-                    className="relative h-full w-full object-contain object-bottom"
-                    loading="lazy"
-                  />
-                )}
+                <Image
+                  src={item.Image}
+                  alt={item.ImageAlt}
+                  width={200}
+                  height={200}
+                  className="relative h-full w-full object-contain object-bottom"
+                  loading="lazy"
+                />
               </div>
               <Link
                 href="/menu"

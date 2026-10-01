@@ -4,7 +4,7 @@
 // This file holds the state and the "pay" request; each step's UI lives in components/checkout.
 // The server (app/api/checkout) works out the real price, so the total shown here is just for display.
 
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import Footer from '@/components/layout/Footer'
 import DetailsStep from '@/components/checkout/DetailsStep'
 import EmptyCart from '@/components/checkout/EmptyCart'
@@ -21,6 +21,18 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<Step>('details')
   const [details, setDetails] = useState<CustomerDetails>(emptyDetails)
   const [paymentError, setPaymentError] = useState<string | null>(null)
+
+  // Whenever the step changes (details -> review -> processing, or back), take the customer to the
+  // top of the page so they start the new step at its heading instead of halfway down.
+  // Skipped on first load so we don't move the page before they've done anything.
+  const previousStep = useRef(step)
+  useEffect(() => {
+    if (previousStep.current === step) return
+    previousStep.current = step
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+  }, [step])
 
   const subtotal = cartSubtotal(cart)
   const total = subtotal
