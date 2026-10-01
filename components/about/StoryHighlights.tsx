@@ -54,6 +54,7 @@ export default function StoryHighlights() {
                 ) : (
                   <video
                     src={item.video}
+                    aria-label={item.alt}
                     autoPlay
                     muted
                     loop
