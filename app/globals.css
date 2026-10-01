@@ -114,9 +114,10 @@
   flex-shrink: 0;
 }
 
+/* The lines are narrower than the button, so it looks small but is still 44px wide to tap. */
 .nambita-menu-toggle span {
   display: block;
-  width: 100%;
+  width: 26px;
   height: 3px;
   border-radius: 9999px;
   background: currentColor;

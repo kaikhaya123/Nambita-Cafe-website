@@ -6,15 +6,40 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { motionSettings } from '@/lib/motion'
 
+// Each photo has its own `alt` describing what's in it, for screen readers and Google.
 const aboutFilmstripImages = [
-  '/Images/Image-nambita.jpg',
-  '/Images/710585744_18364618711233342_2743655767556918703_n.jpg',
-  '/Images/Plater for 2.jpeg',
-  '/Images/nambitacafe_1776619960157.webp',
-  '/Images/slaqa_salon_1776620029550.jpeg',
-  '/Images/slaqa_salon_1776794135346.webp',
-  '/Images/slaqa_salon_1776620026853.webp',
-  '/Images/751668292_18371379598233342_6040821482744936655_n.jpg',
+  {
+    src: '/Images/Image-nambita.jpg',
+    alt: 'Smiling customer eating chicken wings outside Nambita Cafe, with a Coke on the table',
+  },
+  {
+    src: '/Images/710585744_18364618711233342_2743655767556918703_n.jpg',
+    alt: 'Close-up of sticky glazed chicken wings and cheesy fries on a serving tray',
+  },
+  {
+    src: '/Images/Plater for 2.jpeg',
+    alt: 'Platter for two with wors rolls, fries, glazed wings and a dip in a takeaway box',
+  },
+  {
+    src: '/Images/nambitacafe_1776619960157.webp',
+    alt: 'The Nambita Cafe counter lit up at night, with a staff member by the yellow sign',
+  },
+  {
+    src: '/Images/slaqa_salon_1776620029550.jpeg',
+    alt: 'Young customer smiling while holding a Nambita Cafe snack box',
+  },
+  {
+    src: '/Images/slaqa_salon_1776794135346.webp',
+    alt: 'Customer in a South Africa football jersey holding a Nambita Cafe smoothie',
+  },
+  {
+    src: '/Images/slaqa_salon_1776620026853.webp',
+    alt: 'Customer sipping a berry smoothie in front of the Nambita Cafe counter',
+  },
+  {
+    src: '/Images/751668292_18371379598233342_6040821482744936655_n.jpg',
+    alt: 'Customer enjoying loaded fries beside a "Welcome to Nambita Cafe" chalkboard',
+  },
 ] as const
 
 export default function AboutTeaser() {
@@ -95,17 +120,26 @@ export default function AboutTeaser() {
       >
         <div className="h-[360px] w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] sm:h-[500px]">
           <div className="animate-marquee-strip flex h-full w-max gap-3 sm:gap-4">
-            {[...aboutFilmstripImages, ...aboutFilmstripImages].map((src, index) => (
-              <div key={`${src}-${index}`} className="relative h-full w-[240px] shrink-0 sm:w-[380px]">
-                <Image
-                  src={src}
-                  alt="Nambita Cafe atmosphere"
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 640px) 380px, 240px"
-                />
-              </div>
-            ))}
+            {/* The photos are listed twice so the scrolling loop has no gap. The second copy is
+                hidden from screen readers (empty alt + aria-hidden) so each photo is only read out once. */}
+            {[...aboutFilmstripImages, ...aboutFilmstripImages].map((photo, index) => {
+              const isRepeat = index >= aboutFilmstripImages.length
+              return (
+                <div
+                  key={`${photo.src}-${index}`}
+                  aria-hidden={isRepeat || undefined}
+                  className="relative h-full w-[240px] shrink-0 sm:w-[380px]"
+                >
+                  <Image
+                    src={photo.src}
+                    alt={isRepeat ? '' : photo.alt}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 640px) 380px, 240px"
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
       </motion.div>
