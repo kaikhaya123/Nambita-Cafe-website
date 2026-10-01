@@ -22,7 +22,10 @@ export default function StepProgress({ currentStep }: Readonly<{ currentStep: St
   const currentIndex = stepOrder.indexOf(currentStep)
 
   return (
-    <div className="mx-auto flex w-full max-w-sm items-center">
+    // Three equal columns, each with its circle in the middle. The line for each step starts at the
+    // centre of its circle and is exactly one column wide, so it ends at the centre of the next circle.
+    // It sits behind the circles, so the circles cover its ends and the steps look joined up.
+    <div className="mx-auto grid w-full max-w-sm grid-cols-3">
       {stepMeta.map((s, index) => {
         const isComplete = currentIndex > index
         const isCurrent = currentStep === s.key
@@ -35,28 +38,27 @@ export default function StepProgress({ currentStep }: Readonly<{ currentStep: St
         }
 
         return (
-          <div key={s.key} className="flex flex-1 items-center last:flex-none">
-            <div className="flex flex-col items-center gap-2">
-              <div
-                className={`flex h-9 w-9 items-center justify-center rounded-full font-dm-sans text-xs font-bold transition-colors ${circleClass}`}
-              >
-                {isComplete ? <CheckIcon /> : index + 1}
-              </div>
-              <span
-                className={`whitespace-nowrap font-dm-sans text-[0.65rem] uppercase tracking-[0.06em] ${
-                  isCurrent ? 'font-bold text-black-900' : 'text-black-900/40'
-                }`}
-              >
-                {s.label}
-              </span>
-            </div>
+          <div key={s.key} className="relative flex flex-col items-center gap-2">
             {index < stepMeta.length - 1 && (
-              <div className="mx-2 mb-5 h-[2px] flex-1 rounded-full bg-black/10 sm:mx-3">
+              // top-[17px] puts this 2px line through the middle of the 36px (h-9) circle.
+              <div className="absolute left-1/2 top-[17px] h-[2px] w-full bg-black/10">
                 <div
-                  className={`h-full rounded-full bg-black-900 transition-all duration-300 ${isComplete ? 'w-full' : 'w-0'}`}
+                  className={`h-full bg-black-900 transition-all duration-300 ${isComplete ? 'w-full' : 'w-0'}`}
                 />
               </div>
             )}
+            <div
+              className={`relative z-10 flex h-9 w-9 items-center justify-center rounded-full font-dm-sans text-xs font-bold transition-colors ${circleClass}`}
+            >
+              {isComplete ? <CheckIcon /> : index + 1}
+            </div>
+            <span
+              className={`text-center font-dm-sans text-[0.65rem] uppercase tracking-[0.06em] ${
+                isCurrent ? 'font-bold text-black-900' : 'text-black-900/40'
+              }`}
+            >
+              {s.label}
+            </span>
           </div>
         )
       })}

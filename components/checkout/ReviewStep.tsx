@@ -9,6 +9,25 @@ import type { CustomerDetails } from '@/components/checkout/types'
 import type { CafeLocation } from '@/lib/cafe-locations'
 import { lineTotal, type OrderLine } from '@/lib/menu-data'
 
+// Pen-on-a-square "edit" icon. It uses currentColor, so it takes the same colour as the button text.
+function EditIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-3.5 w-3.5"
+      aria-hidden="true"
+    >
+      <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+    </svg>
+  )
+}
+
 export default function ReviewStep({
   details,
   selectedLocation,
@@ -46,8 +65,9 @@ export default function ReviewStep({
         <button
           type="button"
           onClick={onEditDetails}
-          className="mt-3 font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70 underline"
+          className="mt-3 inline-flex items-center gap-1.5 font-dm-sans text-xs uppercase tracking-[0.1em] text-black-900/70 underline transition-colors hover:text-black-900"
         >
+          <EditIcon />
           Edit details
         </button>
       </div>

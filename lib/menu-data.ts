@@ -38,7 +38,7 @@ export function lineTotal(line: OrderLine) {
 
 export const menuSections: MenuSection[] = [
   {
-    title: 'Wors Roll Combo',
+    title: 'Original Wors Roll',
     items: [
       {
         id: 'wors-roll-combo',
@@ -50,26 +50,26 @@ export const menuSections: MenuSection[] = [
     ],
   },
   {
-    title: 'Wings Combo',
+    title: 'Original Wings ',
     items: [
       {
         id: 'wings-4-fries',
-        name: '4 WINGS + FRIES',
-        description: '4 crumbed or flame-grilled wings served with a side of fries.',
+        name: '4 WINGS + FRIES ',
+        description: '4 crumbed or flame-grilled wings served with a side of fries and a Coke.',
         price: 65,
-        image: '/Images/menu/wings.jpg',
+        image: '/Images/IMG_4311.png',
       },
       {
         id: 'wings-6-fries',
-        name: '6 WINGS + FRIES',
-        description: '6 crumbed or flame-grilled wings served with a side of fries.',
+        name: '6 WINGS + FRIES + COKE',
+        description: '6 crumbed or flame-grilled wings served with a side of fries and a Coke.',
         price: 85,
         image: '/Images/menu/wings-combo.png',
       },
     ],
   },
   {
-    title: 'Drinks',
+    title: 'Original Drinks',
     items: [
       { id: 'smoothie', name: 'SMOOTHIE', description: 'Freshly blended smoothie, cold and refreshing.', price: 55, image: '/Images/ChatGPT Image Jul 13, 2026, 04_12_00 PM-Photoroom.png' },
       { id: 'iced-coffee', name: 'ICED COFFEE', description: 'Cold coffee over ice for a fresh pick-me-up.', price: 35, image: '/Images/ChatGPT Image Jul 13, 2026, 04_26_07 PM-Photoroom.png' },

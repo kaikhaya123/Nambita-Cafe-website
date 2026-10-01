@@ -8,6 +8,28 @@ import { cartSubtotal, useCart } from '@/lib/cart'
 import { closeCartDrawer, useCartDrawerOpen } from '@/lib/cart-drawer'
 import { lineTotal } from '@/lib/menu-data'
 
+// Trash-can "delete" icon. It uses currentColor, so it takes the same colour as the button text.
+function TrashIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-3.5 w-3.5"
+      aria-hidden="true"
+    >
+      <path d="M3 6h18" />
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+    </svg>
+  )
+}
+
 // The slide-in "Your Order" panel. Opened from the navbar cart icon or after adding an item.
 export default function CartDrawer() {
   const { cart, removeFromCart, clearCart } = useCart()
@@ -73,15 +95,6 @@ export default function CartDrawer() {
 
               {cart.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center gap-2 p-5 text-center">
-                  {/* Empty-basket picture above the message; alt="" because the text below already says it. */}
-                  <Image
-                    src="/Icons/empty-cart.png"
-                    alt=""
-                    width={160}
-                    height={160}
-                    sizes="160px"
-                    className="mb-4 h-32 w-32 object-contain sm:h-40 sm:w-40"
-                  />
                   <p className="font-teko text-xl uppercase tracking-[0.05em] text-black-900">Your cart is empty</p>
                   <p className="text-sm text-black-900/70">Add something tasty from the menu.</p>
                 </div>
@@ -114,8 +127,9 @@ export default function CartDrawer() {
                             type="button"
                             aria-label={`Remove ${line.item.name}`}
                             onClick={() => removeFromCart(line.key)}
-                            className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-black-900 underline transition-opacity duration-200 hover:opacity-60"
+                            className="mt-1 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.08em] text-black-900 underline transition-opacity duration-200 hover:opacity-60"
                           >
+                            <TrashIcon />
                             Remove
                           </button>
                         </div>

@@ -30,10 +30,7 @@ export default function FindLocationPrompt({
         aria-hidden="true"
         className="h-32 w-32 object-contain sm:h-36 sm:w-36"
       />
-      <h2 className="mt-6 font-teko text-2xl uppercase tracking-[0.03em] text-black-900">Find a Location Nearby</h2>
-      <p className="mx-auto mt-3 max-w-xs text-sm leading-6 text-black-900/70">
-        Let us know where you are so we can recommend nearby locations.
-      </p>
+      <h2 className="mt-6 font-teko text-2xl uppercase tracking-[0.03em] text-white">Find a Location Nearby</h2>
       {geoStatus === 'denied' && (
         <p className="mt-3 max-w-xs text-xs font-bold uppercase tracking-[0.06em] text-brand-caramel">
           We couldn&apos;t access your location. Try searching your address above instead.
@@ -43,7 +40,7 @@ export default function FindLocationPrompt({
         type="button"
         onClick={onShareLocation}
         disabled={geoStatus === 'loading'}
-        className="btn mt-7 px-8 bg-brand-green text-white hover:bg-brand-caramel"
+        className="btn mt-7 border-2 border-white bg-black-900 px-8 text-white hover:bg-white hover:text-black-900"
       >
         {geoStatus === 'loading' ? 'Locating…' : 'Share Location'}
       </button>

@@ -57,22 +57,29 @@ export default function NambitaCafeMapPage() {
   const showEmptyState = !userCoords && !committedSearch
 
   return (
-    <div className="min-h-screen bg-brand-offwhite [&_h1]:font-teko [&_h2]:font-teko [&_h3]:font-teko">
-      {/* Sub-header */}
-      <div className="flex items-center justify-center bg-black-900 px-5 py-5 sm:px-8">
-        <h1 className="font-teko text-xl uppercase tracking-[0.05em] text-white sm:text-2xl">Locations</h1>
-      </div>
+    <div className="min-h-screen bg-black-900 text-white [&_h1]:font-teko [&_h2]:font-teko [&_h3]:font-teko">
+      {/* Page heading kept for Google and screen readers, but hidden on screen (sr-only). */}
+      <h1 className="sr-only">Nambita Cafe Locations</h1>
 
-      <LocationSearch value={searchInput} onChange={setSearchInput} onSubmit={handleSearchSubmit} />
+      {/* Before the customer searches, this area fills the screen below the navbar (h-20, sm:h-24)
+          so the "Find a Location Nearby" prompt can sit in the middle of it.
+          On phones, pb-24 keeps it clear of the yellow "Order Now" bar fixed at the bottom. */}
+      <div
+        className={
+          showEmptyState ? 'flex min-h-[calc(100svh-5rem)] flex-col sm:min-h-[calc(100svh-6rem)]' : undefined
+        }
+      >
+        <LocationSearch value={searchInput} onChange={setSearchInput} onSubmit={handleSearchSubmit} />
 
-      {/* Content */}
-      <div className="mx-auto max-w-2xl px-5 py-8 sm:px-8">
+        {/* Content */}
         {showEmptyState ? (
-          <FindLocationPrompt geoStatus={geoStatus} onShareLocation={handleShareLocation} />
+          <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 pb-24 pt-8 sm:px-8 lg:pb-8">
+            <FindLocationPrompt geoStatus={geoStatus} onShareLocation={handleShareLocation} />
+          </div>
         ) : (
-          <div className="space-y-4">
+          <div className="mx-auto max-w-2xl space-y-4 px-5 py-8 sm:px-8">
             {decoratedLocations.length === 0 ? (
-              <p className="py-10 text-center text-sm text-black-900/70">No locations match your search.</p>
+              <p className="py-10 text-center text-sm text-white/70">No locations match your search.</p>
             ) : (
               decoratedLocations.map((location) => <LocationCard key={location.id} location={location} />)
             )}
