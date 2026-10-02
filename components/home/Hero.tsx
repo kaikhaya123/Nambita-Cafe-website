@@ -32,6 +32,8 @@ function HandDrawnHeart() {
 export default function HomeHero() {
   return (
     <section className="hero-viewport-home relative w-full overflow-hidden bg-brand-yellow">
+      {/* The page's main heading, for Google and screen readers (hidden on screen, sr-only). */}
+      <h1 className="sr-only">Nambita Cafe: wings, wors rolls and coffee in KwaMashu and Waterloo, Durban</h1>
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
