@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cleanStaffName, createAccount, getAccountByName, isStaffRole, summarize } from '@/lib/staff-accounts'
 import { getStaffSession } from '@/lib/staff-auth'
 
-// Manager only: add a team member. They can't log in until given a setup code.
+// Manager only: add a team member. Staff can log in straight away with the shared staff password;
+// managers need a setup code from the Team page first.
 export async function POST(request: NextRequest) {
   const session = await getStaffSession()
   if (session?.role !== 'manager') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

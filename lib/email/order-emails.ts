@@ -3,9 +3,11 @@
 // - the "your order is ready" notice (when staff mark it ready)
 
 import { lineTotal, type OrderLine } from '@/lib/menu-data'
+import { ticketNumber } from '@/lib/orders'
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL
+const EMAIL_TIMEOUT_MS = 10_000
 
 export interface OrderForReceipt {
   order_number: string
@@ -67,8 +69,9 @@ function buildReceiptHtml(order: OrderForReceipt) {
 
       <div style="border-top:1px dashed #d8d3c4;border-bottom:1px dashed #d8d3c4;margin:18px 0;padding:16px 0;text-align:center;">
         <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6b6b63;">Order Number</div>
-        <div style="font-size:26px;font-weight:700;letter-spacing:0.05em;color:#161611;margin-top:2px;">${escapeHtml(order.order_number)}</div>
+        <div style="font-size:40px;font-weight:700;letter-spacing:0.05em;color:#161611;margin-top:2px;">${escapeHtml(ticketNumber(order.order_number))}</div>
         <div style="font-size:12px;color:#6b6b63;margin-top:6px;">${escapeHtml(orderDate)}</div>
+        <div style="font-size:11px;color:#6b6b63;margin-top:2px;">Ref ${escapeHtml(order.order_number)}</div>
       </div>
 
       <div style="font-size:13px;color:#161611;margin-bottom:4px;">
@@ -124,6 +127,8 @@ async function sendEmail(kind: string, to: string, subject: string, html: string
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ from: RESEND_FROM_EMAIL, to, subject, html }),
+      // Don't let a slow email service hold up the kitchen board or Yoco's webhook.
+      signal: AbortSignal.timeout(EMAIL_TIMEOUT_MS),
     })
 
     if (!response.ok) {
@@ -144,7 +149,7 @@ export async function sendOrderReceiptEmail(order: OrderForReceipt) {
   await sendEmail(
     'receipt',
     order.customer_email,
-    `Your Nambita Cafe order ${order.order_number} is confirmed`,
+    `Nambita Cafe: Order No. ${ticketNumber(order.order_number)} is confirmed`,
     buildReceiptHtml(order)
   )
 }
@@ -165,7 +170,7 @@ function buildReadyHtml(order: OrderForReadyNotice) {
 
       <div style="border-top:1px dashed #d8d3c4;border-bottom:1px dashed #d8d3c4;margin:18px 0;padding:16px 0;">
         <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6b6b63;">Order Number</div>
-        <div style="font-size:26px;font-weight:700;letter-spacing:0.05em;color:#161611;margin-top:2px;">${escapeHtml(order.order_number)}</div>
+        <div style="font-size:40px;font-weight:700;letter-spacing:0.05em;color:#161611;margin-top:2px;">${escapeHtml(ticketNumber(order.order_number))}</div>
       </div>
 
       <div style="font-size:13px;color:#161611;">
@@ -185,7 +190,7 @@ export async function sendOrderReadyEmail(order: OrderForReadyNotice) {
   await sendEmail(
     'ready-for-collection',
     order.customer_email,
-    `Order ${order.order_number} is ready for collection`,
+    `Order No. ${ticketNumber(order.order_number)} is ready for collection`,
     buildReadyHtml(order)
   )
 }

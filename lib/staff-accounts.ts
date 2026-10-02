@@ -41,16 +41,45 @@ export function cleanStaffName(value: unknown, maxLength = 40) {
   return typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, maxLength) : ''
 }
 
+/**
+ * Only managers have their own password and an authenticator app. Staff all log in with the one
+ * shared staff password (STAFF_DASHBOARD_PASSWORD), so they never go through the setup-code page.
+ */
+export function usesAuthenticator(role: StaffRole) {
+  return role === 'manager'
+}
+
+const MIN_STAFF_PASSWORD_LENGTH = 8
+
+/**
+ * The shared staff password from the server settings (.env.local / Vercel), or null if it's
+ * missing or shorter than 8 characters (too easy to guess, so staff login stays off).
+ */
+export function staffDashboardPassword() {
+  const value = process.env.STAFF_DASHBOARD_PASSWORD?.trim() ?? ''
+  return value.length >= MIN_STAFF_PASSWORD_LENGTH ? value : null
+}
+
+/** True once the person can log in: staff need the shared password to be set, managers their own password and authenticator. */
+export function isSetUp(account: StaffAccount) {
+  if (!usesAuthenticator(account.role)) return staffDashboardPassword() !== null
+  return Boolean(account.password_hash && account.totp_secret)
+}
+
 export function summarize(account: StaffAccount): StaffAccountSummary {
+  // Setup codes are only for managers now; an old one left on a staff account is ignored.
   const codeValid = Boolean(
-    account.setup_code_hash && account.setup_code_expires_at && new Date(account.setup_code_expires_at).getTime() > Date.now()
+    usesAuthenticator(account.role) &&
+      account.setup_code_hash &&
+      account.setup_code_expires_at &&
+      new Date(account.setup_code_expires_at).getTime() > Date.now()
   )
   return {
     id: account.id,
     name: account.name,
     role: account.role,
     isActive: account.is_active,
-    isSetUp: Boolean(account.password_hash && account.totp_secret),
+    isSetUp: isSetUp(account),
     setupCodeExpiresAt: codeValid ? account.setup_code_expires_at : null,
   }
 }

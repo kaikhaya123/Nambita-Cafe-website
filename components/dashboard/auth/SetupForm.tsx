@@ -183,8 +183,13 @@ export default function SetupForm({ accounts, firstManagerAvailable, initialAcco
       <p className="mt-1 text-center text-sm text-black-900/60">
         {isFirstManager
           ? 'Create the first manager account using the manager password from the server settings.'
-          : 'Enter the one-time setup code a manager gave you.'}
+          : 'For managers: enter the one-time setup code another manager gave you.'}
       </p>
+      {!isFirstManager && (
+        <p className="mt-2 text-center text-xs text-black-900/50">
+          Staff don’t need this page. Log in with the staff password from HQ.
+        </p>
+      )}
 
       {accounts === null ? (
         <p role="alert" className="mt-6 rounded-lg bg-red-50 p-4 text-center text-sm font-bold text-red-800">
@@ -225,7 +230,6 @@ export default function SetupForm({ accounts, firstManagerAvailable, initialAcco
             {people.map((account) => (
               <option key={account.id} value={account.id} className="text-black-900">
                 {account.name}
-                {account.role === 'manager' ? ' (Manager)' : ''}
               </option>
             ))}
           </Select>

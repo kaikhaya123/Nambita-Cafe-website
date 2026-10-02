@@ -1,9 +1,10 @@
 // /api/staff/team/:id — managers only.
-// POST: issue a new one-time setup code (also resets an existing login).
+// POST: give a manager a one-time setup code (also resets their existing login).
+//   Staff don't get one: they all use the shared staff password (STAFF_DASHBOARD_PASSWORD).
 // PATCH: deactivate or reactivate someone.
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getAccount, SETUP_CODE_TTL_MS, summarize, updateAccount } from '@/lib/staff-accounts'
+import { getAccount, SETUP_CODE_TTL_MS, summarize, updateAccount, usesAuthenticator } from '@/lib/staff-accounts'
 import { getStaffSession } from '@/lib/staff-auth'
 import { generateSetupCode, hashSetupCode } from '@/lib/security/tokens'
 
@@ -14,8 +15,8 @@ async function requireManager() {
   return session?.role === 'manager' ? session : null
 }
 
-// Manager only: issue a one-time setup code. For someone already set up this is a reset —
-// their old password and authenticator stop working and they're logged out everywhere.
+// Manager only: one-time setup code for a manager. For someone already set up this is a reset:
+// their old login stops working and they're logged out everywhere.
 export async function POST(_request: NextRequest, { params }: Context) {
   const session = await requireManager()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -28,6 +29,13 @@ export async function POST(_request: NextRequest, { params }: Context) {
   try {
     const account = await getAccount(id)
     if (!account) return NextResponse.json({ error: 'Team member not found.' }, { status: 404 })
+
+    if (!usesAuthenticator(account.role)) {
+      return NextResponse.json(
+        { error: 'Staff use the shared staff password. To change it, update STAFF_DASHBOARD_PASSWORD and redeploy.' },
+        { status: 400 }
+      )
+    }
 
     const code = generateSetupCode()
     const expiresAt = new Date(Date.now() + SETUP_CODE_TTL_MS).toISOString()

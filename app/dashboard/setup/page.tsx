@@ -1,8 +1,9 @@
-// Login setup page (URL: /dashboard/setup). New staff enter the setup code a manager gave them,
-// then choose a password and link an authenticator app. Also used once to create the very first manager.
+// Manager login setup page (URL: /dashboard/setup). New managers enter the setup code another manager
+// gave them, then choose a password and link an authenticator app. Also used once to create the very
+// first manager. Staff don't use this page: HQ gives them a password from the Team page.
 
 import SetupForm from '@/components/dashboard/auth/SetupForm'
-import { hasActiveManager, listAccounts, summarize, type StaffAccountSummary } from '@/lib/staff-accounts'
+import { hasActiveManager, listAccounts, summarize, usesAuthenticator, type StaffAccountSummary } from '@/lib/staff-accounts'
 
 export default async function StaffSetupPage({
   searchParams,
@@ -10,7 +11,7 @@ export default async function StaffSetupPage({
   let accounts: StaffAccountSummary[] | null = null
   let firstManagerAvailable = false
   try {
-    accounts = (await listAccounts()).filter((a) => a.is_active).map(summarize)
+    accounts = (await listAccounts()).filter((a) => a.is_active && usesAuthenticator(a.role)).map(summarize)
     firstManagerAvailable = Boolean(process.env.MANAGER_DASHBOARD_PASSWORD) && !(await hasActiveManager())
   } catch (error) {
     console.error('Failed to load accounts for setup', error)

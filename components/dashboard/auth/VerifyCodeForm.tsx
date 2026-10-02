@@ -1,6 +1,6 @@
 'use client'
 
-// Staff login step 2 form: the 6-digit authenticator code.
+// Manager login step 2 form: the 6-digit authenticator code. (Staff log in with just a password.)
 
 import { useState } from 'react'
 import Link from 'next/link'

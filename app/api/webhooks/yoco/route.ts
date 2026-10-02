@@ -51,9 +51,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
-  const event = JSON.parse(payload) as {
+  let event: {
     type?: string
     payload?: { metadata?: { orderNumber?: string } } & Record<string, unknown>
+  }
+  try {
+    event = JSON.parse(payload)
+  } catch {
+    console.error('Yoco webhook body is not valid JSON')
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
   }
 
   const orderNumber = event.payload?.metadata?.orderNumber
@@ -66,13 +72,14 @@ export async function POST(request: NextRequest) {
   else if (event.type?.includes('failed')) status = 'failed'
 
   if (orderNumber && status) {
-    const supabase = getSupabaseAdmin()
-
     // Conditional updates make retries and out-of-order events harmless:
     // - "paid" only changes a row that isn't paid yet, so the receipt goes out once.
     // - "failed" only changes a pending order, so it can't undo a payment.
+    // If anything here fails we answer 500, and Yoco tries again later.
+    let supabase: ReturnType<typeof getSupabaseAdmin>
     let changed: boolean
     try {
+      supabase = getSupabaseAdmin()
       const query = supabase.from('orders').update({ status }).eq('order_number', orderNumber)
       const { data, error } = await (status === 'paid' ? query.neq('status', 'paid') : query.eq('status', 'pending')).select(
         'order_number'

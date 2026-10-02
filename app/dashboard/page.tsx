@@ -3,7 +3,6 @@
 import { redirect } from 'next/navigation'
 import OrdersBoard from '@/components/dashboard/orders/OrdersBoard'
 import { getStaffSession } from '@/lib/staff-auth'
-import { cafeLocations } from '@/lib/cafe-locations'
 
 export default async function DashboardPage() {
   const session = await getStaffSession()
@@ -11,11 +10,5 @@ export default async function DashboardPage() {
     redirect('/nambita-staff-access')
   }
 
-  return (
-    <OrdersBoard
-      role={session.role}
-      staffName={session.name}
-      locations={cafeLocations.map(({ id, name }) => ({ id, name }))}
-    />
-  )
+  return <OrdersBoard role={session.role} staffName={session.name} />
 }
