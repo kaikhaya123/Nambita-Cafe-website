@@ -44,6 +44,18 @@ Run these in the Supabase **SQL Editor**, in this order:
 
 In the Yoco dashboard, point the webhook at `https://<your-domain>/api/webhooks/yoco`.
 
+## Maintenance commands
+
+These run on your computer and use the settings in `.env.local`, so they work on the **live database**.
+
+| Command | When | What it does |
+| --- | --- | --- |
+| `npm run ops:check` | Any time something seems wrong, or weekly | **Read-only.** Checks every setting is filled in and looks right, the database tables exist, no orders are stuck (unpaid for over an hour, or paid but still on the kitchen board after 12 hours) and there is at least one active manager. |
+| `npm run ops:monthly` | First week of each month | Everything in `ops:check`, plus: last month's sales (orders, revenue, branches, top items), marks unpaid orders older than 2 days as `cancelled`, deletes old rate-limit counters, lists who can log in, and checks the npm packages for security issues and updates. |
+| `npm run ops:monthly -- --dry-run` | Before the real run, if unsure | Same as above, but only says what it *would* tidy. Changes nothing. |
+
+Lines marked `WARN` need attention; each one says what to do. The code is in `scripts/ops/`.
+
 ---
 
 ## Where everything lives
@@ -79,6 +91,7 @@ lib/                    Logic and data that isn't a component
   api-response.ts         small helpers shared by the API routes
   rate-limit.ts           limits how often something can happen (e.g. checkouts per visitor)
 
+scripts/ops/            Maintenance commands (npm run ops:check, ops:monthly). See "Maintenance commands"
 supabase/               SQL for setting up the database
 public/                 Images, icons, videos, fonts (a file at public/Images/x.png is served at /Images/x.png)
 ```
