@@ -1,6 +1,6 @@
-import { createHash, createHmac, randomInt, timingSafeEqual } from 'node:crypto'
+import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
 
-// Server-only. Signed tokens (sessions, setup hand-off) and one-time setup codes.
+// Server-only. Signed tokens (the login cookie), safe secret comparison and password fingerprints.
 
 function getSecret() {
   const secret = process.env.DASHBOARD_SESSION_SECRET
@@ -27,9 +27,9 @@ function sign(purpose: string, payload: string) {
 }
 
 /**
- * A short fingerprint of a secret (e.g. the shared staff password), safe to put inside a login token:
+ * A short fingerprint of a secret (e.g. a role's shared password), safe to put inside a login token:
  * it can't be turned back into the secret without DASHBOARD_SESSION_SECRET. If the secret changes,
- * so does the fingerprint, which is how changing the staff password logs every staff member out.
+ * so does the fingerprint, which is how changing a role's password logs everyone in that role out.
  */
 export function secretFingerprint(value: string) {
   return sign('fingerprint', value).slice(0, 16)
@@ -52,21 +52,4 @@ export function verifyToken<T>(purpose: string, token: string | undefined): T | 
   } catch {
     return null
   }
-}
-
-// No 0/O/1/I/L so codes are easy to read out loud or copy from a note.
-const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
-
-/** A one-time setup code like "K7P2M-QX9TD" (~50 bits of randomness). */
-export function generateSetupCode() {
-  const chars = Array.from({ length: 10 }, () => CODE_ALPHABET[randomInt(CODE_ALPHABET.length)])
-  return `${chars.slice(0, 5).join('')}-${chars.slice(5).join('')}`
-}
-
-export function normalizeSetupCode(code: string) {
-  return code.toUpperCase().replace(/[^A-Z0-9]/g, '')
-}
-
-export function hashSetupCode(code: string) {
-  return createHash('sha256').update(normalizeSetupCode(code)).digest('hex')
 }

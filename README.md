@@ -25,8 +25,8 @@ Built with **Next.js** (App Router), **React**, **Tailwind CSS**, **Supabase** (
 | `YOCO_WEBHOOK_SECRET` | Lets the server check that "payment succeeded" messages really come from Yoco. |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Connects to the database. **Keep the service role key secret**: it can read and change everything. |
 | `DASHBOARD_SESSION_SECRET` | 32+ random characters used to sign staff logins. Changing it logs everyone out. |
-| `MANAGER_DASHBOARD_PASSWORD` | Only used once, to create the very first manager account at `/dashboard/setup`. |
-| `STAFF_DASHBOARD_PASSWORD` | The one password all **staff** use to log in (8+ characters). Changing it logs every staff member out. Managers don't use it. |
+| `MANAGER_DASHBOARD_PASSWORD` | The one password all **managers** use to log in (8+ characters). Changing it logs every manager out. |
+| `STAFF_DASHBOARD_PASSWORD` | The one password all **staff** use to log in (8+ characters). Changing it logs every staff member out. |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Sends receipts and "your order is ready" emails. |
 | `NEXT_PUBLIC_SITE_URL` | The live website address, used in SEO tags. Defaults to `https://nambitacafe.co.za`. |
 
@@ -56,8 +56,8 @@ app/                    Pages and API routes. The folder path is the URL.
   map/page.tsx            /map           Find a branch
   checkout/page.tsx       /checkout      Details → review → pay
   checkout/success/       /checkout/success   After paying: live order progress
-  dashboard/              /dashboard…    Staff area: orders board, order history, sales, performance, team, setup
-  nambita-staff-access/   Staff login (password; managers then enter an authenticator code)
+  dashboard/              /dashboard…    Staff area: orders board, order history, sales, performance, team
+  nambita-staff-access/   Dashboard login (Staff or Manager, name, password)
   api/                    Server code the pages call (never runs in the browser)
 
 components/             The building blocks of the pages, grouped by page
@@ -74,7 +74,7 @@ lib/                    Logic and data that isn't a component
   order-history.ts        loads orders for the Order History and order details pages
   analytics.ts            numbers for the sales and performance reports
   email/order-emails.ts   receipt and "ready" emails
-  staff-*.ts, security/   staff accounts, logins, passwords, authenticator codes
+  staff-*.ts, security/   staff accounts, logins and the login cookie
   supabase.ts             database connection
   api-response.ts         small helpers shared by the API routes
   rate-limit.ts           limits how often something can happen (e.g. checkouts per visitor)
@@ -116,24 +116,17 @@ Each order shows a short number, **Order No. 005**, worked out from its real ref
 
 ### Staff logins
 
-Everyone has their own account (their name in the list). **Staff** all log in with one shared staff password that HQ sets.
-**Managers** use their own password **and** an authenticator app code (like Google Authenticator), because they can see sales and manage the team.
+Everyone has an account (their name in the list), but passwords are shared per role and set by HQ:
+**staff** use `STAFF_DASHBOARD_PASSWORD` and **managers** use `MANAGER_DASHBOARD_PASSWORD`
+(in `.env.local`, and in Vercel's Environment Variables for the live site). There's no authenticator app or setup code.
 
-**Staff:**
+1. A manager adds the person on `/dashboard/team` as **Staff** or **Manager**. They can log in straight away.
+2. They log in at `/nambita-staff-access`: choose **Staff** or **Manager**, their name, and type that role's password.
+3. Someone leaves? Click **Deactivate** next to their name (logged out everywhere). If they knew the password, also change it and redeploy: that logs everyone in that role out and the old password stops working.
 
-1. HQ sets the staff password in `STAFF_DASHBOARD_PASSWORD` (in `.env.local`, and in Vercel's Environment Variables for the live site) and tells the staff.
-2. A manager adds each person on `/dashboard/team`. They can log in straight away.
-3. They log in at `/nambita-staff-access`: choose **Staff**, their name, and type the staff password.
-4. Someone leaves? Click **Deactivate** next to their name. If they knew the password, also change `STAFF_DASHBOARD_PASSWORD` and redeploy: that logs every staff member out and the old password stops working.
+5 wrong passwords lock that name for 15 minutes.
 
-**Managers:**
-
-1. Another manager adds them on `/dashboard/team` and clicks **Setup code**. They get a one-time code like `K7P2M-QX9TD` and give it to the person.
-2. The new manager opens `/dashboard/setup`, enters the code, scans the QR code with their authenticator app and chooses a password.
-3. From then on they log in at `/nambita-staff-access` with the password, then the 6-digit code from the app.
-
-Managers can **Reset** another manager (new setup code, old login stops working) or **Deactivate** anyone (logged out everywhere).
-The very first manager is created at `/dashboard/setup` using `MANAGER_DASHBOARD_PASSWORD`.
+> To add the very first manager (e.g. after a fresh database), add a row in Supabase's `staff_accounts` table with their `name` and `role` = `manager`.
 
 | Page | Who can see it |
 | --- | --- |

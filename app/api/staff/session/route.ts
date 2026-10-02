@@ -1,31 +1,24 @@
+// /api/staff/session — the dashboard login.
+// POST: check the password and log in. Staff type STAFF_DASHBOARD_PASSWORD and managers type
+//   MANAGER_DASHBOARD_PASSWORD (both from the server settings). 5 wrong tries lock that name for 15 minutes.
+// DELETE: log out.
+
 import { NextRequest, NextResponse } from 'next/server'
 import { slowDown } from '@/lib/api-response'
 import {
   getAccount,
   isLocked,
-  isSetUp,
   isStaffRole,
   recordFailedAttempt,
-  staffDashboardPassword,
+  rolePassword,
+  rolePasswordSettingName,
   updateAccount,
-  usesAuthenticator,
 } from '@/lib/staff-accounts'
-import {
-  createLoginChallenge,
-  createStaffSessionToken,
-  currentStaffPasswordKey,
-  LOGIN_CHALLENGE_COOKIE,
-  sessionCookieOptions,
-  STAFF_COOKIE_NAME,
-} from '@/lib/staff-auth'
-import { verifyPassword } from '@/lib/security/password'
+import { createStaffSessionToken, currentPasswordKey, sessionCookieOptions, STAFF_COOKIE_NAME } from '@/lib/staff-auth'
 import { secretsMatch } from '@/lib/security/tokens'
 
-// POST: check the password.
-//   - Staff: the shared staff password (STAFF_DASHBOARD_PASSWORD) logs them straight in (no authenticator).
-//   - Managers: a correct password only unlocks the authenticator-code page
-//     (/nambita-staff-access/verify, finished by ./verify); it does not log them in yet.
-// DELETE: log out.
+const SIGN_IN_FAILED = 'Could not sign in right now. Please try again.'
+
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as
     | { accountId?: unknown; role?: unknown; password?: unknown }
@@ -42,22 +35,19 @@ export async function POST(request: NextRequest) {
     account = await getAccount(accountId)
   } catch (error) {
     console.error('Failed to load account for login', error)
-    return NextResponse.json({ error: 'Could not sign in right now. Please try again.' }, { status: 500 })
+    return NextResponse.json({ error: SIGN_IN_FAILED }, { status: 500 })
   }
 
   if (!account || !account.is_active || account.role !== body.role) {
     await slowDown()
     return NextResponse.json({ error: 'Please choose your name from the list.' }, { status: 400 })
   }
-  const isManager = usesAuthenticator(account.role)
-  if (!isSetUp(account)) {
+
+  const expected = rolePassword(account.role)
+  if (!expected) {
+    console.error(`${rolePasswordSettingName(account.role)} is missing or shorter than 8 characters — ${account.role} login is off.`)
     return NextResponse.json(
-      {
-        error: isManager
-          ? 'Your account is not set up yet. Ask another manager for a setup code.'
-          : 'Staff login isn’t switched on yet. Ask HQ (a manager) to set the staff password.',
-        needsSetup: true,
-      },
+      { error: 'This login isn’t switched on yet. Ask HQ to set the password.', needsSetup: true },
       { status: 403 }
     )
   }
@@ -68,44 +58,33 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Managers: their own password. Staff: the one shared staff password from the server settings.
-  const sharedStaffPassword = staffDashboardPassword()
-  const passwordOk = isManager
-    ? await verifyPassword(password, account.password_hash)
-    : sharedStaffPassword !== null && secretsMatch(password.trim(), sharedStaffPassword)
-
-  if (!passwordOk) {
+  if (!secretsMatch(password.trim(), expected)) {
     await recordFailedAttempt(account).catch((error) => console.error('Failed to record login attempt', error))
     await slowDown()
     return NextResponse.json({ error: 'Incorrect password.' }, { status: 401 })
   }
 
-  if (!isManager) {
-    // Staff: log in now. Clear any earlier wrong attempts first.
-    try {
-      await updateAccount(account.id, { failed_attempts: 0, locked_until: null })
-    } catch (error) {
-      console.error('Failed to reset login attempts', error)
-      return NextResponse.json({ error: 'Could not sign in right now. Please try again.' }, { status: 500 })
-    }
-    const staffPasswordKey = currentStaffPasswordKey() ?? undefined
-    const { token, expiresAt } = createStaffSessionToken(account.id, account.session_version, staffPasswordKey)
-    const response = NextResponse.json({ ok: true, role: account.role, next: '/dashboard' })
-    response.cookies.set(STAFF_COOKIE_NAME, token, sessionCookieOptions(expiresAt))
-    response.cookies.delete(LOGIN_CHALLENGE_COOKIE)
-    return response
+  // Correct: clear any earlier wrong attempts, then log in.
+  try {
+    await updateAccount(account.id, { failed_attempts: 0, locked_until: null })
+  } catch (error) {
+    console.error('Failed to reset login attempts', error)
+    return NextResponse.json({ error: SIGN_IN_FAILED }, { status: 500 })
   }
 
-  // Manager: go on to the authenticator-code page.
-  const { token, cookieOptions } = createLoginChallenge(account.id, account.session_version)
-  const response = NextResponse.json({ ok: true, next: '/nambita-staff-access/verify' })
-  response.cookies.set(LOGIN_CHALLENGE_COOKIE, token, cookieOptions)
+  const passwordKey = currentPasswordKey(account.role)!
+  const { token, expiresAt } = createStaffSessionToken(account.id, account.session_version, passwordKey)
+  const response = NextResponse.json({
+    ok: true,
+    role: account.role,
+    next: account.role === 'manager' ? '/dashboard/sales' : '/dashboard',
+  })
+  response.cookies.set(STAFF_COOKIE_NAME, token, sessionCookieOptions(expiresAt))
   return response
 }
 
 export async function DELETE() {
   const response = NextResponse.json({ ok: true })
   response.cookies.delete(STAFF_COOKIE_NAME)
-  response.cookies.delete(LOGIN_CHALLENGE_COOKIE)
   return response
 }
