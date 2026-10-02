@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "ops:check": "node --env-file-if-exists=.env.local scripts/ops/check.mjs",
+    "ops:monthly": "node --env-file-if-exists=.env.local scripts/ops/monthly.mjs"
   },
   "browserslist": {
     "production": [

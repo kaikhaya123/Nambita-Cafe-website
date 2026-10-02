@@ -95,11 +95,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(seoConfig.siteUrl),
-  icons: {
-    icon: '/logo/NAMBITA Logo/NambitaL4.png',
-    shortcut: '/logo/NAMBITA Logo/NambitaL4.png',
-    apple: '/logo/NAMBITA Logo/NambitaL4.png',
-  },
+  // The tab icon comes from app/icon.png and the phone home-screen icon from app/apple-icon.png
+  // (black logo on brand yellow). Next.js finds them by file name.
   ...buildPageMetadata({
     title: 'Nambita Cafe | Coffee, Smoothies & Food in Durban',
     description:
@@ -118,6 +115,10 @@ export const metadata: Metadata = {
       'snack bar Durban',
     ],
   }),
+  // Proves to Google Search Console that we own the site (adds <meta name="google-site-verification">).
+  verification: {
+    google: 'Hi5dylKxiOW-NIyKCVa1cCYM8q-2Q2oQBpjBtyFzIrU',
+  },
 }
 
 const restaurantSchema = {
