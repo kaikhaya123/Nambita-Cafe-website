@@ -1,10 +1,8 @@
 'use client'
 
-// Staff login form: role, name and password. Staff are logged straight in;
-// managers go on to the authenticator-code page next.
+// Dashboard login form: choose Staff or Manager, pick your name, type your role's shared password.
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { StaffAccountSummary, StaffRole } from '@/lib/staff-accounts'
 import { AuthCard, FormError, inputClass, labelClass, primaryButtonClass, Select } from './AuthCard'
@@ -25,9 +23,8 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
   const selectedRole = roleOptions.find((option) => option.value === role) ?? roleOptions[0]
   const people = (accounts ?? []).filter((account) => account.role === role)
   const selectedAccount = people.find((account) => account.id === accountId)
+  // True when this role's password isn't set on the server yet, so nobody in it can log in.
   const needsSetup = selectedAccount !== undefined && !selectedAccount.isSetUp
-  // Only managers use an authenticator app (same rule as usesAuthenticator in lib/staff-accounts.ts).
-  const isManager = role === 'manager'
 
   function chooseRole(next: StaffRole) {
     setRole(next)
@@ -49,8 +46,7 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
       })
       const data = (await response.json().catch(() => null)) as { error?: string; next?: string } | null
       if (!response.ok || !data?.next) throw new Error(data?.error ?? 'Could not sign in.')
-      // Password is right. Staff are now logged in and go to the dashboard;
-      // managers go to the separate authenticator-code page.
+      // Logged in: staff go to the orders board, managers to Sales.
       router.replace(data.next)
       router.refresh()
     } catch (err) {
@@ -100,22 +96,10 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
             ))}
           </Select>
 
-          {needsSetup && !isManager && (
+          {needsSetup && (
             <div className="mt-6 rounded-lg border border-black-900/15 bg-brand-offwhite p-4 text-sm">
-              <p className="font-bold">Staff login isn’t switched on yet.</p>
-              <p className="mt-1 text-black-900/60">Ask HQ (a manager) to set the staff password, then log in here.</p>
-            </div>
-          )}
-          {needsSetup && isManager && (
-            <div className="mt-6 rounded-lg border border-black-900/15 bg-brand-offwhite p-4 text-sm">
-              <p className="font-bold">{selectedAccount.name} hasn’t set up their login yet.</p>
-              <p className="mt-1 text-black-900/60">Ask another manager for a setup code, then set your password and authenticator.</p>
-              <Link
-                href={`/dashboard/setup?account=${selectedAccount.id}`}
-                className="mt-3 inline-block font-bold underline underline-offset-2"
-              >
-                Set up my login →
-              </Link>
+              <p className="font-bold">{selectedRole.label} login isn’t switched on yet.</p>
+              <p className="mt-1 text-black-900/60">Ask HQ to set the {selectedRole.label.toLowerCase()} password, then log in here.</p>
             </div>
           )}
           {!needsSetup && (
@@ -135,30 +119,16 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
               <FormError message={error} />
 
               <button type="submit" disabled={isSubmitting || !accountId || !password} className={primaryButtonClass}>
-                {isSubmitting ? 'Checking…' : isManager ? 'Continue' : 'Log In'}
+                {isSubmitting ? 'Checking…' : 'Log In'}
               </button>
-              {isManager && (
-                <p className="mt-3 text-center text-xs text-black-900/50">
-                  Next, you’ll enter the code from your authenticator app.
-                </p>
-              )}
             </>
           )}
         </>
       )}
 
-      {isManager ? (
-        <p className="mt-6 text-center text-xs text-black-900/60">
-          New manager or have a setup code?{' '}
-          <Link href="/dashboard/setup" className="font-bold text-black-900 underline underline-offset-2">
-            Set up your login
-          </Link>
-        </p>
-      ) : (
-        <p className="mt-6 text-center text-xs text-black-900/60">
-          Staff use the shared staff password from HQ. Don’t know it? Ask a manager.
-        </p>
-      )}
+      <p className="mt-6 text-center text-xs text-black-900/60">
+        Use the {selectedRole.label.toLowerCase()} password from HQ. Don’t know it? Ask HQ.
+      </p>
     </AuthCard>
   )
 }

@@ -1,5 +1,5 @@
-// Team page (URL: /dashboard/team). Managers only: add people, issue setup codes to new managers,
-// deactivate people. Staff log in with the shared STAFF_DASHBOARD_PASSWORD.
+// Team page (URL: /dashboard/team). Managers only: add people and deactivate/reactivate them.
+// Staff log in with STAFF_DASHBOARD_PASSWORD and managers with MANAGER_DASHBOARD_PASSWORD.
 
 import { redirect } from 'next/navigation'
 import DashboardShell from '@/components/dashboard/DashboardShell'

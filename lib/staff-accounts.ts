@@ -1,6 +1,9 @@
 import { getSupabaseAdmin } from '@/lib/supabase'
 
-// Server-only. Personal dashboard accounts (see supabase/migrations/004_staff_accounts.sql).
+// Server-only. Dashboard accounts (see supabase/migrations/004_staff_accounts.sql).
+// Everyone picks their own name, then types their role's shared password:
+// staff use STAFF_DASHBOARD_PASSWORD and managers use MANAGER_DASHBOARD_PASSWORD (server settings).
+// The password_hash / totp_secret / setup_code columns are from the old personal logins and aren't used any more.
 
 export type StaffRole = 'staff' | 'manager'
 
@@ -26,12 +29,10 @@ export interface StaffAccountSummary {
   role: StaffRole
   isActive: boolean
   isSetUp: boolean
-  setupCodeExpiresAt: string | null
 }
 
 export const MAX_FAILED_ATTEMPTS = 5
 export const LOCKOUT_MS = 15 * 60 * 1000
-export const SETUP_CODE_TTL_MS = 48 * 60 * 60 * 1000
 
 export function isStaffRole(value: unknown): value is StaffRole {
   return value === 'staff' || value === 'manager'
@@ -41,46 +42,40 @@ export function cleanStaffName(value: unknown, maxLength = 40) {
   return typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, maxLength) : ''
 }
 
-/**
- * Only managers have their own password and an authenticator app. Staff all log in with the one
- * shared staff password (STAFF_DASHBOARD_PASSWORD), so they never go through the setup-code page.
- */
-export function usesAuthenticator(role: StaffRole) {
-  return role === 'manager'
+const MIN_ROLE_PASSWORD_LENGTH = 8
+
+// Which server setting holds each role's shared password.
+const rolePasswordSetting: Record<StaffRole, string> = {
+  staff: 'STAFF_DASHBOARD_PASSWORD',
+  manager: 'MANAGER_DASHBOARD_PASSWORD',
 }
 
-const MIN_STAFF_PASSWORD_LENGTH = 8
-
-/**
- * The shared staff password from the server settings (.env.local / Vercel), or null if it's
- * missing or shorter than 8 characters (too easy to guess, so staff login stays off).
- */
-export function staffDashboardPassword() {
-  const value = process.env.STAFF_DASHBOARD_PASSWORD?.trim() ?? ''
-  return value.length >= MIN_STAFF_PASSWORD_LENGTH ? value : null
+/** The name of the setting that holds this role's password, for messages like "set MANAGER_DASHBOARD_PASSWORD". */
+export function rolePasswordSettingName(role: StaffRole) {
+  return rolePasswordSetting[role]
 }
 
-/** True once the person can log in: staff need the shared password to be set, managers their own password and authenticator. */
+/**
+ * The shared password for a role, from the server settings (.env.local / Vercel), or null if it's
+ * missing or shorter than 8 characters (too easy to guess, so that role can't log in).
+ */
+export function rolePassword(role: StaffRole) {
+  const value = process.env[rolePasswordSetting[role]]?.trim() ?? ''
+  return value.length >= MIN_ROLE_PASSWORD_LENGTH ? value : null
+}
+
+/** True if this person can log in, i.e. their role's password is set on the server. */
 export function isSetUp(account: StaffAccount) {
-  if (!usesAuthenticator(account.role)) return staffDashboardPassword() !== null
-  return Boolean(account.password_hash && account.totp_secret)
+  return rolePassword(account.role) !== null
 }
 
 export function summarize(account: StaffAccount): StaffAccountSummary {
-  // Setup codes are only for managers now; an old one left on a staff account is ignored.
-  const codeValid = Boolean(
-    usesAuthenticator(account.role) &&
-      account.setup_code_hash &&
-      account.setup_code_expires_at &&
-      new Date(account.setup_code_expires_at).getTime() > Date.now()
-  )
   return {
     id: account.id,
     name: account.name,
     role: account.role,
     isActive: account.is_active,
     isSetUp: isSetUp(account),
-    setupCodeExpiresAt: codeValid ? account.setup_code_expires_at : null,
   }
 }
 
@@ -109,45 +104,17 @@ export async function updateAccount(id: string, fields: Partial<Omit<StaffAccoun
   if (error) throw error
 }
 
-/**
- * Saves new credentials only if the setup code is still the one issued (single atomic
- * update), so the same code can't be used twice even by two browsers at once.
- */
-export async function consumeSetupCode(id: string, codeHash: string, fields: Partial<Omit<StaffAccount, 'id'>>) {
-  const { data, error } = await getSupabaseAdmin()
-    .from('staff_accounts')
-    .update(fields)
-    .eq('id', id)
-    .eq('setup_code_hash', codeHash)
-    .gt('setup_code_expires_at', new Date().toISOString())
-    .eq('is_active', true)
-    .select('id')
-  if (error) throw error
-  return (data ?? []).length === 1
-}
-
 export async function createAccount(fields: Partial<Omit<StaffAccount, 'id'>> & { name: string; role: StaffRole }) {
   const { data, error } = await getSupabaseAdmin().from('staff_accounts').insert(fields).select('*').single()
   if (error) throw error
   return data as StaffAccount
 }
 
-export async function hasActiveManager() {
-  const { count, error } = await getSupabaseAdmin()
-    .from('staff_accounts')
-    .select('id', { count: 'exact', head: true })
-    .eq('role', 'manager')
-    .eq('is_active', true)
-    .not('password_hash', 'is', null)
-  if (error) throw error
-  return (count ?? 0) > 0
-}
-
 export function isLocked(account: StaffAccount) {
   return Boolean(account.locked_until && new Date(account.locked_until).getTime() > Date.now())
 }
 
-/** Counts a failed password/code attempt and locks the account after too many. */
+/** Counts a wrong password and locks the account after too many. */
 export async function recordFailedAttempt(account: StaffAccount) {
   const attempts = account.failed_attempts + 1
   await updateAccount(account.id, {

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-// Shared frame and field styles for the login and setup screens.
+// Shared frame and field styles for the login screen.
 
 export const inputClass =
   'mt-2 w-full rounded-lg border border-black-900/30 bg-white px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-2 focus:ring-brand-yellow'
@@ -69,29 +69,5 @@ export function Select({
         <path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4Z" />
       </svg>
     </div>
-  )
-}
-
-/** 6-digit authenticator code field; phones offer the number pad and can autofill codes. */
-export function CodeInput({
-  id,
-  value,
-  onChange,
-  autoFocus = false,
-}: Readonly<{ id: string; value: string; onChange: (value: string) => void; autoFocus?: boolean }>) {
-  return (
-    <input
-      id={id}
-      autoFocus={autoFocus}
-      type="text"
-      inputMode="numeric"
-      autoComplete="one-time-code"
-      pattern="[0-9]{6}"
-      maxLength={6}
-      placeholder="123456"
-      value={value}
-      onChange={(event) => onChange(event.target.value.replace(/\D/g, '').slice(0, 6))}
-      className={`${inputClass} text-center font-mono text-2xl tracking-[0.4em] placeholder:text-black-900/20`}
-    />
   )
 }

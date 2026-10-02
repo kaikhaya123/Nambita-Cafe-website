@@ -1,5 +1,4 @@
-// Staff login (URL: /nambita-staff-access): choose your name and enter your password.
-// Staff are then logged in; managers go on to step 2, the authenticator code (./verify).
+// Dashboard login (URL: /nambita-staff-access): choose Staff or Manager, your name, and that role's password.
 
 import LoginForm from '@/components/dashboard/auth/LoginForm'
 import { listAccounts, summarize, type StaffAccountSummary } from '@/lib/staff-accounts'
