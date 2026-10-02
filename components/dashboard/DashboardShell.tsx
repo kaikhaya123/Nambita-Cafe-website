@@ -1,8 +1,9 @@
 'use client'
 
-// Frame around every dashboard page: black header, "Logged in as", and the side menu.
+// Frame around every dashboard page: black header (with today's date) and the side menu
+// (with "Logged in as" just above Log Out).
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -11,6 +12,7 @@ import type { StaffRole } from '@/lib/staff-auth'
 
 const navItems: { href: string; label: string; icon: string; managerOnly: boolean }[] = [
   { href: '/dashboard', label: 'Orders', icon: '/Icons/paper-bag.png', managerOnly: false },
+  { href: '/dashboard/history', label: 'History', icon: '/Icons/order.png', managerOnly: false },
   { href: '/dashboard/sales', label: 'Sales', icon:'/Icons/pos.png', managerOnly: false },
   { href: '/dashboard/menu-performance', label: 'Performance', icon: '/Icons/teamwork.png', managerOnly: true },
   { href: '/dashboard/team', label: 'Team', icon: '/Icons/profile.png', managerOnly: true },
@@ -30,10 +32,34 @@ function NavIcon({ src, onDark }: Readonly<{ src: string; onDark: boolean }>) {
 
 const HEADER_HEIGHT = 'h-16 sm:h-20'
 
+// Today's date in South African time, e.g. long "Friday 2 October 2026", short "Fri 2 Oct 2026".
+function formatToday(style: 'long' | 'short') {
+  return new Date().toLocaleDateString('en-GB', {
+    weekday: style,
+    day: 'numeric',
+    month: style,
+    year: 'numeric',
+    timeZone: 'Africa/Johannesburg',
+  })
+}
+
+// Re-checks the date every minute, so it changes over at midnight without a page refresh.
+function subscribeToClock(onChange: () => void) {
+  const timer = window.setInterval(onChange, 60_000)
+  return () => window.clearInterval(timer)
+}
+
+/**
+ * Today's date for the header. Empty while the page is first built on the server (whose clock and
+ * time zone can differ from the browser's), then filled in by the browser.
+ */
+function useToday(style: 'long' | 'short') {
+  return useSyncExternalStore(subscribeToClock, () => formatToday(style), () => '')
+}
+
 interface Props {
   role: StaffRole
   staffName: string
-  headerRight?: React.ReactNode
   persistentNav?: boolean
   /** Page title shown in the header in place of the logo when the sidebar is visible. */
   title?: string
@@ -43,7 +69,6 @@ interface Props {
 export default function DashboardShell({
   role,
   staffName,
-  headerRight,
   persistentNav = false,
   title,
   children,
@@ -51,6 +76,8 @@ export default function DashboardShell({
   const router = useRouter()
   const pathname = usePathname()
   const [isNavOpen, setIsNavOpen] = useState(false)
+  const todayLong = useToday('long')
+  const todayShort = useToday('short')
 
   useEffect(() => {
     if (!isNavOpen) return
@@ -81,7 +108,9 @@ export default function DashboardShell({
       </div>
       <div className="h-8 shrink-0" aria-hidden />
       {items.map((item) => {
-        const isActive = pathname === item.href
+        // Sub-pages count too (e.g. an order's details page highlights "History"); "/dashboard" itself must match exactly.
+        const isActive =
+          pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(`${item.href}/`))
         return (
           <Link
             key={item.href}
@@ -97,10 +126,18 @@ export default function DashboardShell({
           </Link>
         )
       })}
+      {/* Who is logged in, at the bottom of the menu just above Log Out. */}
+      <div className="mt-auto flex items-center gap-3 border-t border-white/15 px-3 pb-2 pt-4 text-white">
+        <RoleAvatar role={role} onDark className="h-9 w-9 shrink-0" />
+        <span className="min-w-0 leading-tight">
+          <span className="block text-[10px] uppercase tracking-[0.12em] text-white/50">Logged in as</span>
+          <span className="block truncate text-sm font-bold">{staffName}</span>
+        </span>
+      </div>
       <button
         type="button"
         onClick={logout}
-        className="mt-auto flex items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold uppercase tracking-[0.08em] text-white/60 hover:text-white"
+        className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold uppercase tracking-[0.08em] text-white/60 hover:text-white"
       >
         <NavIcon src="/Icons/turn-off.png" onDark />
         Log Out
@@ -155,16 +192,12 @@ export default function DashboardShell({
               )}
             </div>
 
-            <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-4">
-              {headerRight}
-              <div className="flex min-w-0 items-center gap-2" title={`Logged in as ${staffName}`}>
-                <span className="hidden min-w-0 text-right leading-tight md:block">
-                  <span className="block text-[10px] uppercase tracking-[0.12em] text-white/50">Logged in as</span>
-                  <span className="block truncate text-sm font-bold">{staffName}</span>
-                </span>
-                <RoleAvatar role={role} onDark className="h-8 w-8 shrink-0 sm:h-9 sm:w-9" />
-                <span className="sr-only md:hidden">Logged in as {staffName}</span>
-              </div>
+            {/* Today's date: short on phones, written out in full on bigger screens. */}
+            <div className="flex min-w-0 items-center justify-end text-right">
+              <p className="truncate text-xs font-bold sm:text-sm">
+                <span className="md:hidden">{todayShort}</span>
+                <span className="hidden md:inline">{todayLong}</span>
+              </p>
             </div>
           </div>
         </header>

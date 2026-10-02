@@ -1,10 +1,20 @@
 import { cookies } from 'next/headers'
-import { getAccount, type StaffRole } from '@/lib/staff-accounts'
-import { signToken, verifyToken } from '@/lib/security/tokens'
+import { getAccount, staffDashboardPassword, usesAuthenticator, type StaffRole } from '@/lib/staff-accounts'
+import { secretFingerprint, signToken, verifyToken } from '@/lib/security/tokens'
 
 // Server-only. Dashboard sessions for personal staff/manager accounts.
 // The cookie holds a signed account id + session version; every check re-reads the
 // account, so deactivating or resetting someone logs them out everywhere at once.
+// Staff cookies also hold a fingerprint of the shared staff password, so changing
+// STAFF_DASHBOARD_PASSWORD logs every staff member out.
+
+type SessionData = { id: string; v: number; s?: string }
+
+/** Fingerprint of the current shared staff password, or null if staff login is off. */
+export function currentStaffPasswordKey() {
+  const password = staffDashboardPassword()
+  return password ? secretFingerprint(password) : null
+}
 
 export type { StaffRole } from '@/lib/staff-accounts'
 
@@ -19,9 +29,12 @@ export interface StaffSession {
   name: string
 }
 
-export function createStaffSessionToken(accountId: string, sessionVersion: number) {
+/** `staffPasswordKey` is only for staff logins (from currentStaffPasswordKey()); managers leave it out. */
+export function createStaffSessionToken(accountId: string, sessionVersion: number, staffPasswordKey?: string) {
+  const data: SessionData = { id: accountId, v: sessionVersion }
+  if (staffPasswordKey) data.s = staffPasswordKey
   return {
-    token: signToken(SESSION_PURPOSE, { id: accountId, v: sessionVersion }, SESSION_TTL_MS),
+    token: signToken(SESSION_PURPOSE, data, SESSION_TTL_MS),
     expiresAt: new Date(Date.now() + SESSION_TTL_MS),
   }
 }
@@ -69,12 +82,17 @@ export async function getPendingLogin() {
 
 export async function getStaffSession(): Promise<StaffSession | null> {
   const cookieStore = await cookies()
-  const data = verifyToken<{ id: string; v: number }>(SESSION_PURPOSE, cookieStore.get(STAFF_COOKIE_NAME)?.value)
+  const data = verifyToken<SessionData>(SESSION_PURPOSE, cookieStore.get(STAFF_COOKIE_NAME)?.value)
   if (!data) return null
 
   try {
     const account = await getAccount(data.id)
     if (!account || !account.is_active || account.session_version !== data.v) return null
+    // Staff: the shared password must still be the one they logged in with.
+    if (!usesAuthenticator(account.role)) {
+      const key = currentStaffPasswordKey()
+      if (!key || data.s !== key) return null
+    }
     return { accountId: account.id, role: account.role, name: account.name }
   } catch (error) {
     console.error('Failed to load staff session', error)

@@ -1,8 +1,15 @@
 'use client'
 
 // Success page: live "Received -> Preparing -> Ready" bar. Checks the order status every 10 seconds.
+// Stops checking once there's nothing left to wait for, so old open tabs don't keep calling the server.
 
 import { useEffect, useState } from 'react'
+
+const CHECK_EVERY_MS = 10_000
+// Give up after this long (no order takes 4 hours to make).
+const STOP_AFTER_MS = 4 * 60 * 60 * 1000
+// Payment results that will never turn into an order on the kitchen board.
+const finalPaymentStatuses = ['failed', 'cancelled']
 
 const progressSteps = [
   { status: 'new', label: 'Received' },
@@ -16,17 +23,35 @@ export default function OrderProgress({ orderNumber }: { orderNumber: string }) 
   useEffect(() => {
     let cancelled = false
     let timer: number | undefined
+    const startedAt = Date.now()
+
+    function checkAgainLater() {
+      if (!cancelled && Date.now() - startedAt < STOP_AFTER_MS) timer = window.setTimeout(load, CHECK_EVERY_MS)
+    }
 
     async function load() {
+      // Tab in the background: skip this check (saves the server work) and try again later.
+      if (document.hidden) return checkAgainLater()
       try {
         const response = await fetch(`/api/orders/${encodeURIComponent(orderNumber)}/status`, { cache: 'no-store' })
-        if (response.ok && !cancelled) {
-          const data = (await response.json()) as { fulfillmentStatus: string; pickupLocationName: string }
+        if (cancelled) return
+        // No such order: it will never appear, so stop.
+        if (response.status === 404) return
+        if (response.ok) {
+          const data = (await response.json()) as {
+            paymentStatus: string
+            fulfillmentStatus: string
+            pickupLocationName: string
+          }
+          // Payment failed: nothing to show or wait for.
+          if (finalPaymentStatuses.includes(data.paymentStatus)) return
           setStatus(data)
           if (data.fulfillmentStatus === 'collected') return
         }
-      } catch {}
-      if (!cancelled) timer = window.setTimeout(load, 10000)
+      } catch {
+        // Network blip: just try again on the next check.
+      }
+      checkAgainLater()
     }
 
     load()

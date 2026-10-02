@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import OrderProgress from '@/components/checkout/OrderProgress'
 import { useCart } from '@/lib/cart'
+import { ticketNumber } from '@/lib/orders'
 
 export default function CheckoutSuccessContent() {
   const searchParams = useSearchParams()
@@ -28,9 +29,13 @@ export default function CheckoutSuccessContent() {
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-yellow text-3xl">✓</div>
       <h1 className="font-teko text-3xl uppercase tracking-[0.03em] text-black-900 sm:text-4xl">Payment Successful</h1>
       {orderNumber && (
-        <p className="font-dm-sans text-sm text-black-900/70">
-          Order <span className="font-bold text-black-900">{orderNumber}</span> is on its way to being prepared.
-        </p>
+        <>
+          {/* The short number the kitchen calls out at the counter. */}
+          <p className="font-teko text-5xl uppercase leading-none tracking-[0.04em] text-black-900">
+            Order No. {ticketNumber(orderNumber)}
+          </p>
+          <p className="font-dm-sans text-sm text-black-900/70">It&apos;s on its way to being prepared.</p>
+        </>
       )}
       {orderNumber && <OrderProgress orderNumber={orderNumber} />}
       <p className="max-w-sm text-sm text-black-900/70">

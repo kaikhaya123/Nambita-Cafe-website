@@ -1,6 +1,8 @@
 'use client'
 
 // Team page list: shows each person's status and the Setup code / Reset / Deactivate buttons.
+// Staff all log in with the shared staff password (STAFF_DASHBOARD_PASSWORD), so they only have Deactivate.
+// Managers get a setup code here to set their own password and authenticator app.
 
 import { useState } from 'react'
 import RoleAvatar from '@/components/dashboard/RoleAvatar'
@@ -11,6 +13,7 @@ interface Props {
   currentAccountId: string
 }
 
+// A manager setup code that was just created, shown once in the yellow box.
 interface IssuedCode {
   name: string
   code: string
@@ -20,8 +23,15 @@ interface IssuedCode {
 function statusOf(account: StaffAccountSummary) {
   if (!account.isActive) return { label: 'Deactivated', tone: 'bg-black-900/10 text-black-900/60' }
   if (account.isSetUp) return { label: 'Active', tone: 'bg-brand-green text-white' }
+  // Staff are only "not set up" when STAFF_DASHBOARD_PASSWORD is missing on the server.
+  if (account.role === 'staff') return { label: 'No staff password', tone: 'bg-amber-200 text-amber-900' }
   if (account.setupCodeExpiresAt) return { label: 'Setup code sent', tone: 'bg-brand-yellow text-black-900' }
   return { label: 'Needs setup code', tone: 'bg-amber-200 text-amber-900' }
+}
+
+function setupButtonLabel(account: StaffAccountSummary) {
+  if (account.isSetUp) return 'Reset'
+  return account.setupCodeExpiresAt ? 'New code' : 'Setup code'
 }
 
 // Same avatar as the header's "Logged in as" (man icon for managers), faded when deactivated.
@@ -65,6 +75,7 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
     setAccounts((current) => current.map((a) => (a.id === account.id ? account : a)))
   }
 
+  // Managers only: makes a one-time setup code (a reset if they're already set up).
   async function issueCode(account: StaffAccountSummary) {
     if (
       account.isSetUp &&
@@ -192,16 +203,17 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
                 )}
               </div>
 
-              {/* Empty cells keep the columns aligned on rows without these buttons (e.g. your own). */}
+              {/* Empty cells keep the columns aligned on rows without these buttons (your own row, and staff,
+                  who use the shared staff password instead of a setup code). */}
               <div>
-                {!isMe && account.isActive && (
+                {!isMe && account.isActive && account.role === 'manager' && (
                   <button
                     type="button"
                     disabled={isBusy}
                     onClick={() => issueCode(account)}
                     className="w-full rounded-full bg-black-900 px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] text-white disabled:opacity-40"
                   >
-                    {account.isSetUp ? 'Reset' : account.setupCodeExpiresAt ? 'New code' : 'Setup code'}
+                    {setupButtonLabel(account)}
                   </button>
                 )}
               </div>

@@ -26,6 +26,15 @@ function sign(purpose: string, payload: string) {
   return createHmac('sha256', getSecret()).update(`${purpose}:${payload}`).digest('base64url')
 }
 
+/**
+ * A short fingerprint of a secret (e.g. the shared staff password), safe to put inside a login token:
+ * it can't be turned back into the secret without DASHBOARD_SESSION_SECRET. If the secret changes,
+ * so does the fingerprint, which is how changing the staff password logs every staff member out.
+ */
+export function secretFingerprint(value: string) {
+  return sign('fingerprint', value).slice(0, 16)
+}
+
 /** Encodes JSON with an expiry and an HMAC signature scoped to `purpose`. */
 export function signToken(purpose: string, data: object, ttlMs: number) {
   const payload = Buffer.from(JSON.stringify({ ...data, exp: Date.now() + ttlMs })).toString('base64url')

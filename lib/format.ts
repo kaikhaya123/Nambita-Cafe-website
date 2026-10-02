@@ -24,6 +24,19 @@ export function formatValue(value: number, kind: ValueKind) {
   return kind === 'currency' ? formatRand(value) : formatCount(value)
 }
 
+/** "2 Oct 2026, 14:05" in South African time, whatever time zone the server or browser is in. */
+export function formatDateTime(iso: string | null) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Africa/Johannesburg',
+  })
+}
+
 export function formatMinutes(minutes: number | null) {
   if (minutes === null) return '—'
   // Round first so e.g. 119.7 shows as "2h 0m", not "1h 60m".

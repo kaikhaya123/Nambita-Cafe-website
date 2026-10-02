@@ -1,5 +1,6 @@
-// POST /api/staff/setup/start — login setup, step 1 of 2: checks the setup code (or the first-manager
-// password) and returns a QR code for the person's authenticator app.
+// POST /api/staff/setup/start — manager login setup, step 1 of 2: checks the setup code (or the
+// first-manager password) and returns a QR code for their authenticator app. Staff don't use this:
+// HQ gives them a password from the Team page.
 
 import { NextRequest, NextResponse } from 'next/server'
 import QRCode from 'qrcode'
@@ -11,6 +12,7 @@ import {
   hasActiveManager,
   isLocked,
   recordFailedAttempt,
+  usesAuthenticator,
 } from '@/lib/staff-accounts'
 import { hashSetupCode, safeEqual, secretsMatch } from '@/lib/security/tokens'
 import { generateTotpSecret, totpUri } from '@/lib/security/totp'
@@ -47,6 +49,10 @@ export async function POST(request: NextRequest) {
     } else {
       const account = await getAccount(typeof body?.accountId === 'string' ? body.accountId : '')
       if (!account || !account.is_active) return jsonError('Please choose your name from the list.', 400)
+      // Staff don't set up an authenticator any more: HQ gives them a password from the Team page.
+      if (!usesAuthenticator(account.role)) {
+        return jsonError('Staff don’t need to set up a login. Ask HQ (a manager) for your password, then log in.', 400)
+      }
       if (isLocked(account)) return jsonError('Too many attempts. Try again in 15 minutes.', 429)
 
       const codeValid =
