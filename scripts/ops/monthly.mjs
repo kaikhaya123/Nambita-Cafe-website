@@ -79,7 +79,7 @@ async function lastMonthReport() {
 
   info('')
   info('By branch:')
-  for (const [name, branch] of byBranch) info(`  ${name}: ${branch.orders} order(s),${rand(branch.revenue)}`)
+  for (const [name, branch] of byBranch) info(`  ${name}: ${branch.orders} order(s), ${rand(branch.revenue)}`)
 
   info('')
   info('Top 5 items:')
@@ -183,6 +183,7 @@ function runJson(command) {
   }
 }
 
+// Same format as formatRand() in lib/format.ts (R1,234.50), so it matches the dashboard reports.
 function rand(amount) {
-  return `R${amount.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  return `R${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }

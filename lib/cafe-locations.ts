@@ -8,6 +8,10 @@ export interface CafeLocation {
   addressLine2: string
   lat: number
   lng: number
+  /** Optional. Shown to Google as the branch phone number, e.g. '+27 31 123 4567'. */
+  phone?: string
+  /** Optional. Opening hours for Google, e.g. ['Mo-Fr 07:00-18:00', 'Sa 08:00-15:00']. */
+  openingHours?: string[]
 }
 
 export const cafeLocations: CafeLocation[] = [

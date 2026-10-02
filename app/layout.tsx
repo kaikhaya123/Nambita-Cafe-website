@@ -5,7 +5,7 @@ import localFont from 'next/font/local'
 import { Cormorant_Garamond, DM_Sans, Manrope, Teko } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
-import { buildPageMetadata, seoConfig } from '@/lib/seo'
+import { buildPageMetadata, jsonLdScript, seoConfig, siteStructuredData } from '@/lib/seo'
 
 const hagrid = localFont({
   src: [
@@ -98,47 +98,44 @@ export const metadata: Metadata = {
   // The tab icon comes from app/icon.png and the phone home-screen icon from app/apple-icon.png
   // (black logo on brand yellow). Next.js finds them by file name.
   ...buildPageMetadata({
-    title: 'Nambita Cafe | Coffee, Smoothies & Food in Durban',
+    title: 'Nambita Cafe | Wings, Wors Rolls & Coffee in Durban',
     description:
-      'Nambita Cafe serves premium coffee, smoothies, sandwiches, and snacks in Durban. Fresh menu, quick service, and great atmosphere. Visit today!',
+      'Crispy wings, juicy wors rolls, golden chips and ice-cold smoothies. Order online and collect at Nambita Cafe in KwaMashu or Waterloo, Durban.',
     path: '/',
     keywords: [
       'cafe Durban',
-      'coffee shop near me',
-      'smoothie bar Durban',
-      'quick lunch Durban',
+      'cafe near me',
+      'wings and chips Durban',
+      'wors roll Durban',
+      'food KwaMashu',
+      'food Waterloo Durban',
+      'iced coffee Durban',
+      'smoothies Durban',
+      'order online collect Durban',
       'nambita cafe menu',
-      'cafe food Durban',
-      'best coffee Durban',
-      'sandwich shop Durban',
-      'cold drinks Durban',
-      'snack bar Durban',
     ],
   }),
+  applicationName: 'Nambita Cafe',
+  category: 'restaurant',
+  // Lets Google show large image previews and full text snippets in search results.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+  },
+  formatDetection: { telephone: false },
   // Proves to Google Search Console that we own the site (adds <meta name="google-site-verification">).
   verification: {
     google: 'Hi5dylKxiOW-NIyKCVa1cCYM8q-2Q2oQBpjBtyFzIrU',
   },
 }
 
-const restaurantSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Restaurant',
-  name: 'Nambita Cafe',
-  url: seoConfig.siteUrl,
-  menu: `${seoConfig.siteUrl}/menu`,
-  servesCuisine: ['Cafe', 'Sandwich', 'Coffee', 'Smoothie'],
-  priceRange: 'R13-R56',
-}
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${manrope.variable} ${hagrid.variable} ${ncSerif.variable} ${cityBold.variable} ${lucySaidOk.variable} ${gellix.variable} ${dmSans.variable} ${teko.variable}`}>
+    <html lang="en-ZA" suppressHydrationWarning className={`${manrope.variable} ${hagrid.variable} ${ncSerif.variable} ${cityBold.variable} ${lucySaidOk.variable} ${gellix.variable} ${dmSans.variable} ${teko.variable}`}>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantSchema) }}
-        />
+        {/* Tells Google and Bing about the business and each branch (built in lib/seo.ts). */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(siteStructuredData())} />
         <div className="relative pb-[96px] lg:pb-0">
           <Navbar />
           {children}

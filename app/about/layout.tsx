@@ -4,9 +4,11 @@ import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'About Nambita Cafe',
-  description: 'Learn about the story, mission, and offerings of Nambita Cafe in Durban.',
+  title: 'Our Story | Nambita Cafe Durban',
+  description:
+    'How Nambita Cafe grew from the roots of Slaqa Salon into a local favourite in KwaMashu and Waterloo, Durban. Meet the cafe behind #ILoveNambita.',
   path: '/about',
+  keywords: ['nambita cafe story', 'slaqa salon', 'kwamashu cafe'],
 })
 
 export default function NambitaCafeAboutLayout({ children }: { readonly children: React.ReactNode }) {

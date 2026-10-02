@@ -44,6 +44,9 @@ export default function NambitaCafeMenuPage() {
   return (
     <div className="min-h-screen bg-brand-offwhite text-black-900 [&_h1]:font-teko [&_h2]:font-teko [&_h3]:font-teko [&_h4]:font-teko [&_h5]:font-teko [&_h6]:font-teko">
 
+      {/* Page heading kept for Google and screen readers, but hidden on screen (sr-only). */}
+      <h1 className="sr-only">Nambita Cafe Menu</h1>
+
       {/* MENU ITEMS — all categories stacked, per-item stagger */}
       {/* No top padding, so the first black category bar sits right under the navbar. */}
       <section className="border-b border-black bg-brand-offwhite pb-14 sm:pb-16 md:pb-24">

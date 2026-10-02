@@ -54,7 +54,7 @@ export default function AboutTeaser() {
             transition={motionSettings.medium}
             className="max-w-3xl text-left"
           >
-            <h1 className="mt-0 text-3xl font-teko uppercase tracking-[0.01em] text-white sm:text-4xl">
+            <h2 className="mt-0 text-3xl font-teko uppercase tracking-[0.01em] text-white sm:text-4xl">
               {['THE', 'CAFE', 'THAT', 'GREW', 'AROUND', 'THE', 'ROOTS', 'OF', 'SLAQA', 'SALON.'].map((word, wi, words) => {
                 const charOffset = words.slice(0, wi).reduce((sum, w) => sum + w.length + 1, 0)
                 return (
@@ -75,7 +75,7 @@ export default function AboutTeaser() {
                   </span>
                 )
               })}
-            </h1>
+            </h2>
           </motion.div>
 
           <motion.div
