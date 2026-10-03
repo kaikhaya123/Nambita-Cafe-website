@@ -6,14 +6,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDev = process.env.NODE_ENV === 'development'
 
 // Content-Security-Policy: the list of places the browser may load scripts, styles, images, etc. from.
-// Everything this site loads comes from itself ('self'). Fonts are bundled by next/font, Yoco payment
-// happens on Yoco's own page, and Resend is only called from the server, so no outside sites are needed.
+// Almost everything this site loads comes from itself ('self'). Fonts are bundled by next/font, Yoco payment
+// happens on Yoco's own page, and Resend is only called from the server. The one outside site is Google
+// Analytics (components/layout/GoogleAnalytics.tsx), which needs the Google addresses below.
 // 'unsafe-inline' is needed because Next.js adds small inline scripts; 'unsafe-eval' is only for `npm run dev`.
+const googleAnalytics = {
+  script: 'https://*.googletagmanager.com',
+  connect: 'https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com',
+  img: 'https://*.google-analytics.com https://*.googletagmanager.com',
+}
+
 const contentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''};
+  script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${googleAnalytics.script};
+  connect-src 'self' ${googleAnalytics.connect};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data:;
+  img-src 'self' blob: data: ${googleAnalytics.img};
   font-src 'self';
   object-src 'none';
   base-uri 'self';

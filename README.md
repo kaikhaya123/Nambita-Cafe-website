@@ -29,6 +29,7 @@ Built with **Next.js** (App Router), **React**, **Tailwind CSS**, **Supabase** (
 | `STAFF_DASHBOARD_PASSWORD` | The one password all **staff** use to log in (8+ characters). Changing it logs every staff member out. |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Sends receipts and "your order is ready" emails. |
 | `NEXT_PUBLIC_SITE_URL` | The live website address, used in SEO tags. Defaults to `https://nambitacafe.co.za`. |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | The Google Analytics ID (`G-MRXPMXBTW7`). Not a secret. If it's empty, analytics is off. |
 
 `.env.local` is never committed to git. Never paste its values into code.
 
@@ -161,6 +162,7 @@ Everyone has an account (their name in the list), but passwords are shared per r
 | Change navbar links | `components/layout/Navbar.tsx` → `primaryNavLinks` |
 | Change the receipt or "ready" email | `lib/email/order-emails.ts` |
 | Change page titles for Google | the `layout.tsx` next to each page, and `app/layout.tsx` for the default |
+| Change Google Analytics | the ID: `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env.local` and Vercel. Which pages it skips: `components/layout/GoogleAnalytics.tsx` (it only runs on the live site, never on `/dashboard`, staff login or `/checkout/success`) |
 | Change the checkout form | `components/checkout/DetailsStep.tsx` (and the checks in `app/api/checkout/route.ts`) |
 
 ---
