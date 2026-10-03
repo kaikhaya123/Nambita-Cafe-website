@@ -5,6 +5,7 @@ import localFont from 'next/font/local'
 import { Cormorant_Garamond, DM_Sans, Manrope, Teko } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
+import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
 import { buildPageMetadata, jsonLdScript, seoConfig, siteStructuredData } from '@/lib/seo'
 
 const hagrid = localFont({
@@ -140,6 +141,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Navbar />
           {children}
         </div>
+        {/* Visitor stats (public pages on the live site only). See components/layout/GoogleAnalytics.tsx. */}
+        <GoogleAnalytics />
       </body>
     </html>
   )
