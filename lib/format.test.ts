@@ -1,7 +1,20 @@
 // Tests the shared display-formatting helpers.
 
 import { describe, expect, it } from 'vitest'
-import { formatCompact, formatMinutes, formatRand } from './format'
+import { formatCompact, formatDate, formatMinutes, formatRand, formatTime } from './format'
+
+describe('formatDate and formatTime', () => {
+  // 05:04 UTC is 07:04 in South Africa.
+  const placed = '2026-09-30T05:04:00Z'
+
+  it('shows the date in South African time', () => {
+    expect(formatDate(placed)).toMatch(/^30 Sept? 2026$/)
+  })
+
+  it('shows a 24-hour time in South African time', () => {
+    expect(formatTime(placed)).toBe('07:04')
+  })
+})
 
 describe('formatRand', () => {
   it('formats rand values with grouping and two decimal places', () => {

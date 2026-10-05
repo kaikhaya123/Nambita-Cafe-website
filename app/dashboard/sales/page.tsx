@@ -31,7 +31,7 @@ export default async function SalesPage({ searchParams }: Readonly<{ searchParam
         {report ? (
           <>
             <Card>
-              <p className="text-sm text-black-900/60">Revenue · {reportRanges[range].label.toLowerCase()}</p>
+              <p className="text-sm text-black-900/80">Revenue · {reportRanges[range].label.toLowerCase()}</p>
               <p className="mt-1 text-5xl font-bold text-black-900 sm:text-6xl">{formatRand(report.revenue)}</p>
               <Delta current={report.revenue} previous={report.previousRevenue} label={compareLabel} />
             </Card>
@@ -47,10 +47,10 @@ export default async function SalesPage({ searchParams }: Readonly<{ searchParam
               />
               <StatTile icon="bag" label="Items sold" value={formatCount(report.itemsSold)} />
               <StatTile icon="timer" label="Avg time to ready" value={formatMinutes(report.avgPrepMinutes)}>
-                <p className="mt-1 text-xs text-black-900/50">Order placed → ready</p>
+                <p className="mt-1 text-xs text-black-900/80">Order placed → ready</p>
               </StatTile>
               <StatTile icon="hourglass" label="Avg wait at counter" value={formatMinutes(report.avgCollectionWaitMinutes)}>
-                <p className="mt-1 text-xs text-black-900/50">Ready → collected</p>
+                <p className="mt-1 text-xs text-black-900/80">Ready → collected</p>
               </StatTile>
             </div>
 

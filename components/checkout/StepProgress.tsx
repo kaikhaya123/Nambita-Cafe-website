@@ -30,7 +30,8 @@ export default function StepProgress({ currentStep }: Readonly<{ currentStep: St
         const isComplete = currentIndex > index
         const isCurrent = currentStep === s.key
 
-        let circleClass = 'bg-black text-black-900'
+        // Steps still to come: white circle, dark number, thin outline.
+        let circleClass = 'bg-white text-black-900 ring-1 ring-black-900/30'
         if (isComplete) {
           circleClass = 'bg-black-900 text-white'
         } else if (isCurrent) {
@@ -54,7 +55,7 @@ export default function StepProgress({ currentStep }: Readonly<{ currentStep: St
             </div>
             <span
               className={`text-center font-dm-sans text-[0.65rem] uppercase tracking-[0.06em] ${
-                isCurrent ? 'font-bold text-black-900' : 'text-black-900/40'
+                isCurrent ? 'font-bold text-black-900' : 'text-black-900/70'
               }`}
             >
               {s.label}

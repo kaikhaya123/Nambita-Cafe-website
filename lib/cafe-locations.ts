@@ -1,5 +1,8 @@
 // The cafe branches. This list feeds the checkout pickup options, the /map page,
-// the footer addresses and the sales-by-branch report. To add a branch, add it here.
+// the footer addresses, the legal pages and the sales-by-branch report. To add a branch, add it here.
+
+/** The cafe's public contact email: shown in the footer, the legal pages and Google's business info. */
+export const contactEmail = 'info@nambitacafe.co.za'
 
 export interface CafeLocation {
   id: string

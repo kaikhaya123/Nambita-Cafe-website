@@ -2,12 +2,13 @@
 
 import { fulfillmentLabels, type FulfillmentStatus } from '@/lib/orders'
 
-// Same colours as the kitchen board columns, so a stage looks the same everywhere.
+// Same colours as the kitchen board, so a stage looks the same everywhere.
+// Collected is bright green (same as the board's "Collected" button) with black text so it stays readable.
 const stageClasses: Record<FulfillmentStatus, string> = {
   new: 'bg-brand-yellow text-black-900',
   preparing: 'bg-black-900 text-white',
   ready: 'bg-brand-green text-white',
-  collected: 'bg-black-900/10 text-black-900/70',
+  collected: 'bg-green-500 text-black-900',
 }
 
 export default function StageBadge({ stage }: Readonly<{ stage: FulfillmentStatus }>) {

@@ -1,34 +1,30 @@
 'use client'
 
-// Dashboard login form: choose Staff or Manager, pick your name, type your role's shared password.
+// Dashboard login form: choose Staff or Manager, type your name, type your role's shared password.
+// Names are typed rather than picked from a list, so the public login page never shows who works here.
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type { StaffAccountSummary, StaffRole } from '@/lib/staff-accounts'
-import { AuthCard, FormError, inputClass, labelClass, primaryButtonClass, Select } from './AuthCard'
+import type { StaffRole } from '@/lib/staff-accounts'
+import { AuthCard, FormError, inputClass, labelClass, primaryButtonClass } from './AuthCard'
 
 const roleOptions: { value: StaffRole; label: string }[] = [
   { value: 'staff', label: 'Staff' },
   { value: 'manager', label: 'Manager' },
 ]
 
-export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccountSummary[] | null }>) {
+export default function LoginForm() {
   const router = useRouter()
   const [role, setRole] = useState<StaffRole>('staff')
-  const [accountId, setAccountId] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const selectedRole = roleOptions.find((option) => option.value === role) ?? roleOptions[0]
-  const people = (accounts ?? []).filter((account) => account.role === role)
-  const selectedAccount = people.find((account) => account.id === accountId)
-  // True when this role's password isn't set on the server yet, so nobody in it can log in.
-  const needsSetup = selectedAccount !== undefined && !selectedAccount.isSetUp
 
   function chooseRole(next: StaffRole) {
     setRole(next)
-    setAccountId('')
     setPassword('')
     setError(null)
   }
@@ -42,7 +38,7 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
       const response = await fetch('/api/staff/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role, accountId, password }),
+        body: JSON.stringify({ role, name, password }),
       })
       const data = (await response.json().catch(() => null)) as { error?: string; next?: string } | null
       if (!response.ok || !data?.next) throw new Error(data?.error ?? 'Could not sign in.')
@@ -71,7 +67,7 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
             aria-checked={option.value === role}
             onClick={() => chooseRole(option.value)}
             className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] transition-colors ${
-              option.value === role ? 'bg-black-900 text-white' : 'text-black-900/60 hover:text-black-900'
+              option.value === role ? 'bg-black-900 text-white' : 'text-black-900/80 hover:text-black-900'
             }`}
           >
             {option.label}
@@ -79,54 +75,39 @@ export default function LoginForm({ accounts }: Readonly<{ accounts: StaffAccoun
         ))}
       </div>
 
-      {accounts === null ? (
-        <p role="alert" className="mt-6 rounded-lg bg-red-50 p-4 text-center text-sm font-bold text-red-800">
-          Can’t reach the staff list. Check the Supabase connection and that the staff accounts migration has been run.
-        </p>
-      ) : (
-        <>
-          <label htmlFor="login-name" className={`${labelClass} mt-6`}>
-            Your name
-          </label>
-          <Select id="login-name" value={accountId} onChange={setAccountId} placeholder="Select your name">
-            {people.map((account) => (
-              <option key={account.id} value={account.id} className="text-black-900">
-                {account.name}
-              </option>
-            ))}
-          </Select>
+      <label htmlFor="login-name" className={`${labelClass} mt-6`}>
+        Your name
+      </label>
+      <input
+        id="login-name"
+        type="text"
+        autoComplete="username"
+        maxLength={40}
+        placeholder="As it appears on the Team page"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        className={inputClass}
+      />
 
-          {needsSetup && (
-            <div className="mt-6 rounded-lg border border-black-900/15 bg-brand-offwhite p-4 text-sm">
-              <p className="font-bold">{selectedRole.label} login isn’t switched on yet.</p>
-              <p className="mt-1 text-black-900/60">Ask HQ to set the {selectedRole.label.toLowerCase()} password, then log in here.</p>
-            </div>
-          )}
-          {!needsSetup && (
-            <>
-              <label htmlFor="login-password" className={labelClass}>
-                Password
-              </label>
-              <input
-                id="login-password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                className={inputClass}
-              />
+      <label htmlFor="login-password" className={labelClass}>
+        Password
+      </label>
+      <input
+        id="login-password"
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        className={inputClass}
+      />
 
-              <FormError message={error} />
+      <FormError message={error} />
 
-              <button type="submit" disabled={isSubmitting || !accountId || !password} className={primaryButtonClass}>
-                {isSubmitting ? 'Checking…' : 'Log In'}
-              </button>
-            </>
-          )}
-        </>
-      )}
+      <button type="submit" disabled={isSubmitting || !name.trim() || !password} className={primaryButtonClass}>
+        {isSubmitting ? 'Checking…' : 'Log In'}
+      </button>
 
-      <p className="mt-6 text-center text-xs text-black-900/60">
+      <p className="mt-6 text-center text-xs text-black-900/80">
         Use the {selectedRole.label.toLowerCase()} password from HQ. Don’t know it? Ask HQ.
       </p>
     </AuthCard>

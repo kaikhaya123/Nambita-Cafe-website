@@ -61,7 +61,7 @@ export default function ReviewStep({
             {selectedLocation.name} &mdash; {selectedLocation.addressLine1}, {selectedLocation.addressLine2}
           </p>
         )}
-        {details.notes && <p className="mt-1 font-dm-sans text-xs text-black-900/50">Notes: {details.notes}</p>}
+        {details.notes && <p className="mt-1 font-dm-sans text-xs text-black-900/70">Notes: {details.notes}</p>}
         <button
           type="button"
           onClick={onEditDetails}
@@ -123,8 +123,16 @@ export default function ReviewStep({
       >
         Confirm &amp; Pay R{total.toFixed(2)}
       </button>
-      <p className="mt-2 text-center text-xs text-black-900/50">
+      <p className="mt-2 text-center text-xs text-black-900/70">
         You&apos;ll be securely redirected to Yoco to complete your payment.
+      </p>
+      {/* Opens in a new tab so the customer doesn't lose the checkout page. */}
+      <p className="mt-1 text-center text-xs text-black-900/70">
+        By paying you agree to our{' '}
+        <a href="/terms" target="_blank" rel="noopener" className="underline underline-offset-2">
+          Terms &amp; Refund Policy
+        </a>
+        .
       </p>
     </motion.div>
   )

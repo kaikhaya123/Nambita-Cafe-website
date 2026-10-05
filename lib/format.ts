@@ -37,6 +37,25 @@ export function formatDateTime(iso: string | null) {
   })
 }
 
+/** "30 Sept 2026" in South African time. */
+export function formatDate(iso: string | number) {
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Africa/Johannesburg',
+  })
+}
+
+/** "07:04" (24-hour) in South African time. */
+export function formatTime(iso: string | number) {
+  return new Date(iso).toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Africa/Johannesburg',
+  })
+}
+
 export function formatMinutes(minutes: number | null) {
   if (minutes === null) return '—'
   // Round first so e.g. 119.7 shows as "2h 0m", not "1h 60m".

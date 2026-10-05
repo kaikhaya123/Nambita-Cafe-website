@@ -2,27 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-.font-hagrid {
-  font-family: var(--font-hagrid), Georgia, 'Times New Roman', serif;
+/* Brush-script font (Kaushan Script, loaded in app/layout.tsx) for the "#ILoveNambita" headline. */
+.font-script {
+  font-family: var(--font-script), 'Brush Script MT', cursive;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: geometricPrecision;
-}
-
-.font-lucy {
-  font-family: var(--font-lucy), 'Brush Script MT', cursive;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.font-city-bold {
-  font-family: var(--font-city-bold), Georgia, 'Times New Roman', serif;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: geometricPrecision;
 }
 
 .font-dm-sans {
@@ -48,7 +33,7 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: var(--font-gellix), system-ui, sans-serif;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
     min-height: 100%;
     overscroll-behavior-x: none;
   }
@@ -73,9 +58,16 @@
     font-weight: 800;
   }
 
-  /* Body paragraphs use Gellix (loaded in app/layout.tsx). */
+  /* Placeholder text in form fields: dark enough to read (Tailwind's default light grey is too faint). */
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(17 17 17 / 0.6);
+    opacity: 1;
+  }
+
+  /* Body paragraphs use DM Sans (loaded in app/layout.tsx). */
   p {
-    font-family: var(--font-gellix), system-ui, sans-serif;
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
   }
 }
 

@@ -8,6 +8,8 @@ module.exports = {
     extend: {
       colors: {
         black: {
+          // Plain `bg-black`, `border-black/10`, `bg-black/50` etc. use this. Without it those classes do nothing.
+          DEFAULT: '#000000',
           50: '#f9f9f9',
           100: '#f0f0f0',
           200: '#EAEAEA',
@@ -31,8 +33,8 @@ module.exports = {
       },
       fontFamily: {
         'nc-serif': ['var(--font-nc-serif)', 'serif'],
-        // Default body text font (Gellix). Used by `font-sans` and by any text without its own font class.
-        sans: ['var(--font-gellix)', 'system-ui', 'sans-serif'],
+        // Default body text font (DM Sans). Used by `font-sans` and by any text without its own font class.
+        sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
         teko: ['var(--font-teko)', 'sans-serif'],
       },
     },

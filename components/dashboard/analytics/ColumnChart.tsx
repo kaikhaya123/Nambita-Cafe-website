@@ -49,7 +49,7 @@ export default function ColumnChart({ points, kind, labelEvery = 1, emptyMessage
           {ticks.map((tick) => (
             <span
               key={tick}
-              className="absolute right-0 -translate-y-1/2 text-[11px] tabular-nums text-black-900/50"
+              className="absolute right-0 -translate-y-1/2 text-[11px] tabular-nums text-black-900/80"
               style={{ bottom: `${(tick / top) * 100}%` }}
             >
               {formatCompact(tick, kind)}
@@ -81,12 +81,13 @@ export default function ColumnChart({ points, kind, labelEvery = 1, emptyMessage
                   onFocus={() => setActive(index)}
                   onBlur={() => setActive(null)}
                   aria-label={`${point.label}: ${formatValue(point.value, kind)}, ${formatCount(point.orders)} orders`}
-                  className="group relative flex h-full flex-1 items-end justify-center px-[1px] outline-none"
+                  // The keyboard focus ring goes round the whole column, so it shows even on a day with no sales.
+                  className="relative flex h-full flex-1 items-end justify-center rounded-sm px-[1px] outline-none focus-visible:ring-2 focus-visible:ring-black-900"
                 >
                   <span
                     className={`block w-full max-w-[24px] rounded-t transition-opacity ${
-                      active !== null && active !== index ? 'opacity-35' : ''
-                    } ${point.value > 0 ? 'bg-black-900' : ''} group-focus-visible:ring-2 group-focus-visible:ring-brand-caramel`}
+                      active !== null && active !== index ? 'opacity-50' : ''
+                    } ${point.value > 0 ? 'bg-black-900' : ''}`}
                     style={{ height: point.value > 0 ? Math.max(height, 2) : 0 }}
                   />
                 </button>
@@ -99,7 +100,7 @@ export default function ColumnChart({ points, kind, labelEvery = 1, emptyMessage
             {points.map((point, index) => (
               <span
                 key={point.label}
-                className={`flex-1 whitespace-nowrap text-center text-[11px] tabular-nums text-black-900/50 ${
+                className={`flex-1 whitespace-nowrap text-center text-[11px] tabular-nums text-black-900/80 ${
                   hideOnPhone(index) ? 'max-sm:invisible' : ''
                 }`}
               >
@@ -119,7 +120,7 @@ export default function ColumnChart({ points, kind, labelEvery = 1, emptyMessage
             >
               <p className="font-bold">{points[active].label}</p>
               <p>{formatValue(points[active].value, kind)}</p>
-              <p className="text-white/60">
+              <p className="text-white/80">
                 {formatCount(points[active].orders)} order{points[active].orders === 1 ? '' : 's'}
               </p>
             </div>
@@ -127,7 +128,7 @@ export default function ColumnChart({ points, kind, labelEvery = 1, emptyMessage
 
           {isEmpty && (
             <p
-              className="absolute inset-x-0 top-0 flex items-center justify-center text-sm text-black-900/40"
+              className="absolute inset-x-0 top-0 flex items-center justify-center text-sm text-black-900/80"
               style={{ height: CHART_HEIGHT }}
             >
               <span className="bg-white px-3">{emptyMessage}</span>

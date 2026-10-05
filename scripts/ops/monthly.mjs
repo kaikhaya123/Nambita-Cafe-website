@@ -1,8 +1,9 @@
 // npm run ops:monthly: the once-a-month maintenance routine. Runs the health check, sums up last
-// month's sales, tidies old database rows, lists who can log in, and checks the npm packages.
-// Add `-- --dry-run` to see what it would tidy without changing anything.
+// month's sales, backs up the database, tidies old database rows, lists who can log in, and checks the npm packages.
+// Add `-- --dry-run` to see what it would tidy without changing anything (the backup is still made).
 
 import { execSync } from 'node:child_process'
+import { createBackup } from './backup-file.mjs'
 import { checkDatabase, checkOrders, checkSettings, checkStaff, daysAgo, finish, getDb, heading, info, ok, warn } from './shared.mjs'
 
 const DRY_RUN = process.argv.includes('--dry-run')
@@ -20,7 +21,10 @@ if (databaseOk) {
   await checkOrders(db)
   activeStaff = await checkStaff(db)
   await lastMonthReport()
-  await tidyUp()
+  // Backup first, so the tidy-up below can always be undone with ops:restore.
+  heading('Backup')
+  if (await createBackup(db)) await tidyUp()
+  else warn('Skipped the tidy-up because the backup failed.')
   staffReview()
 }
 packageCheck()

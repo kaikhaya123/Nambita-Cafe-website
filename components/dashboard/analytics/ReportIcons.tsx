@@ -1,5 +1,6 @@
-// Inline line icons for report tiles and card titles. They draw in `currentColor`,
-// so they follow the text color, and are hidden from screen readers (the label says it all).
+// Inline line icons for the dashboard: report tiles, card titles and the order details page.
+// They draw in `currentColor`, so they follow the text color, and are hidden from screen readers
+// (the label says it all). Drawn for this site, so no licence or credit is needed.
 
 export type ReportIconName =
   | 'receipt'
@@ -13,6 +14,12 @@ export type ReportIconName =
   | 'star'
   | 'grid'
   | 'plus'
+  | 'user'
+  | 'phone'
+  | 'mail'
+  | 'pin'
+  | 'chef'
+  | 'check'
 
 const paths: Record<ReportIconName, React.ReactNode> = {
   receipt: (
@@ -70,6 +77,45 @@ const paths: Record<ReportIconName, React.ReactNode> = {
     <>
       <circle cx="12" cy="12" r="8.5" />
       <path d="M12 8.5v7M8.5 12h7" />
+    </>
+  ),
+  // Person: the customer's name.
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
+    </>
+  ),
+  // Phone handset: the customer's number.
+  phone: (
+    <path d="M5 3.5h3.5L10 8 7.75 9.5a11 11 0 0 0 6.75 6.75L16 14l4.5 1.5V19a1.5 1.5 0 0 1-1.5 1.5A16 16 0 0 1 3.5 5 1.5 1.5 0 0 1 5 3.5Z" />
+  ),
+  // Envelope: the customer's email.
+  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
+    </>
+  ),
+  // Map pin: the branch they collect from.
+  pin: (
+    <>
+      <path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" />
+      <circle cx="12" cy="9" r="2.5" />
+    </>
+  ),
+  // Chef's hat: the kitchen has started preparing the order.
+  chef: (
+    <>
+      <path d="M7 14.5a4 4 0 0 1-.5-7.97A5.5 5.5 0 0 1 12 3a5.5 5.5 0 0 1 5.5 3.53A4 4 0 0 1 17 14.5" />
+      <path d="M7 14.5V20h10v-5.5M7 17h10" />
+    </>
+  ),
+  // Tick in a circle: done (the customer has collected the order).
+  check: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="m8.5 12.5 2.5 2.5 4.5-5" />
     </>
   ),
 }

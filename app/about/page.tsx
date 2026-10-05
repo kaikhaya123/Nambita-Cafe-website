@@ -12,7 +12,7 @@ export default function NambitaCafeAbout() {
       <AboutIntro />
       <StoryHighlights />
 
-      <section className="bg-white-900">
+      <section className="bg-[#000000]">
         <Footer />
       </section>
     </div>

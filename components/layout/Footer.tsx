@@ -1,8 +1,10 @@
-// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials, contact email.
+// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials, contact email,
+// and the legal links (Privacy Policy, Terms & Refunds, Cookie settings).
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { cafeLocations, directionsHref } from '@/lib/cafe-locations'
+import CookieSettingsButton from '@/components/layout/CookieSettingsButton'
+import { cafeLocations, contactEmail, directionsHref } from '@/lib/cafe-locations'
 
 const exploreLinks = [
   { name: 'Home', href: '/' },
@@ -17,10 +19,13 @@ const socialLinks = [
   { name: 'TikTok', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/tik-tok (1).webp' },
 ]
 
-const contactEmail = 'info@nambitacafe.co.za'
+const legalLinks = [
+  { name: 'Privacy Policy', href: '/privacy' },
+  { name: 'Terms & Refunds', href: '/terms' },
+]
 
 // Every column heading and list shares these styles, so the columns line up and look the same.
-const headingClass = 'font-hagrid text-sm uppercase tracking-[0.14em] text-white'
+const headingClass = 'font-teko text-xl uppercase leading-none tracking-[0.08em] text-white'
 const linkClass = 'font-dm-sans text-sm text-white/80 transition-colors duration-300 hover:text-brand-caramel'
 
 export default function Footer() {
@@ -99,9 +104,21 @@ export default function Footer() {
 
       {/* Copyright strip. Extra bottom padding below `lg` so the fixed yellow "Order Now" bar doesn't cover it. */}
       <div className="px-6 pb-24 pt-6 sm:px-10 lg:pb-6">
-        <p className="mx-auto max-w-7xl text-center text-xs tracking-[0.02em] text-white sm:text-sm">
-          © 2026 Nambita Cafe. All rights reserved.
-        </p>
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 text-center text-xs tracking-[0.02em] text-white sm:text-sm">
+          <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+            {legalLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={linkClass}>
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <CookieSettingsButton className={linkClass} />
+            </li>
+          </ul>
+          <p>© 2026 Nambita Cafe. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   )

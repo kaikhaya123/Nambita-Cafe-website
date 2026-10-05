@@ -55,7 +55,7 @@ export default function MenuCarousel() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-black py-14 sm:py-20">
+    <section className="relative overflow-hidden bg-[#FFFFF] py-14 sm:py-20">
       <div className="relative mx-auto max-w-[1600px] px-10 sm:px-16">
         <button
           type="button"
@@ -103,7 +103,7 @@ export default function MenuCarousel() {
               </div>
               <Link
                 href="/menu"
-                className="relative z-10 mx-auto mt-auto flex h-10 min-h-10 items-center gap-2 font-teko font-bold uppercase tracking-[0.05em] text-lg text-black-900 opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100"
+                className="relative z-10 mx-auto mt-auto flex h-10 min-h-10 items-center gap-2 font-teko font-bold uppercase tracking-[0.05em] text-lg text-black-900 opacity-100 transition-opacity duration-300 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
               >
                 Order Now
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

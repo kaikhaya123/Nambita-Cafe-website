@@ -13,7 +13,7 @@ interface Props {
 }
 
 function statusOf(account: StaffAccountSummary) {
-  if (!account.isActive) return { label: 'Deactivated', tone: 'bg-black-900/10 text-black-900/60' }
+  if (!account.isActive) return { label: 'Deactivated', tone: 'bg-black-900/10 text-black-900/80' }
   if (account.isSetUp) return { label: 'Active', tone: 'bg-brand-green text-white' }
   // Only happens when that role's password is missing on the server.
   return { label: 'No password set', tone: 'bg-amber-200 text-amber-900' }
@@ -95,7 +95,7 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
         </p>
       )}
 
-      <ul className="divide-y divide-black-900/10 overflow-hidden rounded-2xl border border-black-900/10 bg-white">
+      <ul className="divide-y divide-black-900/20 overflow-hidden rounded-2xl border border-black-900/20 bg-white">
         {accounts.map((account) => {
           const status = statusOf(account)
           const isMe = account.id === currentAccountId
@@ -111,9 +111,9 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
                 <div className="min-w-0">
                   <p className="truncate font-bold">
                     {account.name}
-                    {isMe && <span className="ml-2 text-xs font-normal text-black-900/50">(you)</span>}
+                    {isMe && <span className="ml-2 text-xs font-normal text-black-900/80">(you)</span>}
                   </p>
-                  <p className="text-xs uppercase tracking-[0.08em] text-black-900/50">{account.role}</p>
+                  <p className="text-xs uppercase tracking-[0.08em] text-black-900/80">{account.role}</p>
                 </div>
               </div>
               <div className={`sm:flex sm:justify-center ${status.label === 'Active' ? 'hidden' : 'flex'}`}>
@@ -131,7 +131,7 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
                     type="button"
                     disabled={isBusy}
                     onClick={() => setActive(account, !account.isActive)}
-                    className="w-full rounded-full border border-black-900/30 px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] text-black-900/70 hover:border-black-900 disabled:opacity-40"
+                    className="w-full rounded-full border border-black-900/60 px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] text-black-900/80 hover:border-black-900 disabled:opacity-40"
                   >
                     {account.isActive ? 'Deactivate' : 'Reactivate'}
                   </button>
@@ -142,9 +142,9 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
         })}
       </ul>
 
-      <form onSubmit={addMember} className="rounded-2xl border border-black-900/10 bg-white p-5 sm:p-6">
+      <form onSubmit={addMember} className="rounded-2xl border border-black-900/20 bg-white p-5 sm:p-6">
         <h2 className="text-sm font-bold">Add a team member</h2>
-        <p className="mt-1 text-xs text-black-900/60">
+        <p className="mt-1 text-xs text-black-900/80">
           They can log in straight away with the staff or manager password from HQ.
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -158,7 +158,7 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
             placeholder="Full name"
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
-            className="flex-1 rounded-lg border border-black-900/30 px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-2 focus:ring-brand-yellow"
+            className="flex-1 rounded-lg border border-black-900/50 px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-1 focus:ring-black-900"
           />
           <label className="sr-only" htmlFor="new-member-role">
             Role
@@ -167,7 +167,7 @@ export default function TeamManager({ initialAccounts, currentAccountId }: Reado
             id="new-member-role"
             value={newRole}
             onChange={(event) => setNewRole(event.target.value as StaffRole)}
-            className="rounded-lg border border-black-900/30 bg-white px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-2 focus:ring-brand-yellow"
+            className="rounded-lg border border-black-900/50 bg-white px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-1 focus:ring-black-900"
           >
             <option value="staff">Staff</option>
             <option value="manager">Manager</option>

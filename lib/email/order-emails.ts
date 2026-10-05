@@ -33,9 +33,11 @@ function escapeHtml(value: unknown) {
 }
 
 function buildReceiptHtml(order: OrderForReceipt) {
+  // Always South African time: the live server runs in UTC, which would show the time 2 hours early.
   const orderDate = new Date(order.created_at).toLocaleString('en-ZA', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: 'Africa/Johannesburg',
   })
 
   const itemRows = order.items

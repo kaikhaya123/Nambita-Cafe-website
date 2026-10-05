@@ -19,6 +19,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# database backups (npm run ops:backup): they hold customer details, never commit them
+/backups/
+
 # local env files
 .env*.local
 .env

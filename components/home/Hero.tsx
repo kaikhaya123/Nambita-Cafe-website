@@ -22,7 +22,7 @@ function HandDrawnHeart() {
       aria-hidden
       width={600}
       height={409}
-      sizes="120px"
+      sizes="80px"
       priority
       className="ml-[0.08em] inline-block h-[0.8em] w-auto align-baseline brightness-0 invert"
     />
@@ -48,7 +48,8 @@ export default function HomeHero() {
         </video>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 z-10 bg-black" />
+      {/* Dark fade behind the white headline at the bottom, so it stays readable over bright video frames. */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black-900/75 via-black-900/25 to-transparent" />
 
       {/* Bottom padding is larger below `lg` because the yellow "Order Now" bar (Navbar.tsx) is fixed to the
           bottom of the screen there and covers the lower part of the hero. This keeps the headline well above it. */}
@@ -57,9 +58,10 @@ export default function HomeHero() {
             The hashtag is one word with the heart attached (`whitespace-nowrap` keeps them on the same line),
             and it fades up as a single piece so the script letters are never clipped.
             Size: `clamp(smallest, grows with screen width, largest)`. The hashtag + heart is about 6.5× the
-            font size wide, so 13vw makes it fill ~85% of a phone screen, and 9rem (144px) caps it on desktop. */}
+            font size wide, so 9vw makes it fill ~60% of a phone screen, and 5.5rem (88px) caps it on desktop.
+            The heart is sized in `em`, so it shrinks and grows with the text. */}
         <motion.h2
-          className="m-0 whitespace-nowrap font-lucy font-normal leading-[1.1] text-white text-[clamp(2.5rem,13vw,9rem)] drop-shadow-[0_6px_18px_rgba(0,0,0,0.5)]"
+          className="m-0 whitespace-nowrap font-script font-normal leading-[1.1] text-white text-[clamp(2rem,9vw,5.5rem)] drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.78, ease: pageEase, delay: 0.12 }}

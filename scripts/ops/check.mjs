@@ -1,7 +1,8 @@
-// npm run ops:check: a quick, read-only health check of settings, database, orders and staff accounts.
+// npm run ops:check: a quick, read-only health check of settings, database, orders, staff accounts and backups.
 // Safe to run any time; it never changes anything.
 
-import { checkDatabase, checkOrders, checkSettings, checkStaff, finish, getDb } from './shared.mjs'
+import { checkBackupAge } from './backup-file.mjs'
+import { checkDatabase, checkOrders, checkSettings, checkStaff, finish, getDb, heading } from './shared.mjs'
 
 console.log('Nambita Cafe: health check')
 
@@ -11,4 +12,6 @@ if (await checkDatabase(db)) {
   await checkOrders(db)
   await checkStaff(db)
 }
+heading('Backups')
+checkBackupAge()
 finish()

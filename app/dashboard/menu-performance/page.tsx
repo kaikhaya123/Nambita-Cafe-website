@@ -37,13 +37,13 @@ export default async function MenuPerformancePage({
           <>
             <div className="grid gap-4 sm:grid-cols-3">
               <StatTile icon="star" label="Best seller" value={bestSeller?.name ?? '—'}>
-                {bestSeller && <p className="mt-1 text-xs text-black-900/50">{formatCount(bestSeller.quantity)} sold</p>}
+                {bestSeller && <p className="mt-1 text-xs text-black-900/80">{formatCount(bestSeller.quantity)} sold</p>}
               </StatTile>
               <StatTile icon="banknote" label="Top earner" value={topEarner?.name ?? '—'}>
-                {topEarner && <p className="mt-1 text-xs text-black-900/50">{formatRand(topEarner.revenue)} revenue</p>}
+                {topEarner && <p className="mt-1 text-xs text-black-900/80">{formatRand(topEarner.revenue)} revenue</p>}
               </StatTile>
               <StatTile icon="grid" label="Different items sold" value={formatCount(report.items.length)}>
-                <p className="mt-1 text-xs text-black-900/50">across {formatCount(report.totalOrders)} orders</p>
+                <p className="mt-1 text-xs text-black-900/80">across {formatCount(report.totalOrders)} orders</p>
               </StatTile>
             </div>
 

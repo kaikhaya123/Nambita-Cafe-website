@@ -51,11 +51,20 @@ These run on your computer and use the settings in `.env.local`, so they work on
 
 | Command | When | What it does |
 | --- | --- | --- |
-| `npm run ops:check` | Any time something seems wrong, or weekly | **Read-only.** Checks every setting is filled in and looks right, the database tables exist, no orders are stuck (unpaid for over an hour, or paid but still on the kitchen board after 12 hours) and there is at least one active manager. |
-| `npm run ops:monthly` | First week of each month | Everything in `ops:check`, plus: last month's sales (orders, revenue, branches, top items), marks unpaid orders older than 2 days as `cancelled`, deletes old rate-limit counters, lists who can log in, and checks the npm packages for security issues and updates. |
-| `npm run ops:monthly -- --dry-run` | Before the real run, if unsure | Same as above, but only says what it *would* tidy. Changes nothing. |
+| `npm run ops:check` | Any time something seems wrong, or weekly | **Read-only.** Checks every setting is filled in and looks right, the database tables exist, no orders are stuck (unpaid for over an hour, or paid but still on the kitchen board after 12 hours), there is at least one active manager, and your newest backup is less than a week old. |
+| `npm run ops:backup` | **Every week**, and before any big database change | **Read-only.** Saves a copy of the orders and staff accounts to `backups/` on your computer. |
+| `npm run ops:monthly` | First week of each month | Everything in `ops:check`, plus: last month's sales (orders, revenue, branches, top items), **a backup**, then marks unpaid orders older than 2 days as `cancelled`, deletes old rate-limit counters, lists who can log in, and checks the npm packages for security issues and updates. |
+| `npm run ops:monthly -- --dry-run` | Before the real run, if unsure | Same as above, but only says what it *would* tidy. Changes nothing (the backup is still made). |
+| `npm run ops:restore -- backups/<file>.json.gz` | Only after data was lost or damaged | Says what it *would* put back. Add `--confirm` at the end to really restore. Rows in the backup replace the same rows in the database; nothing is deleted. It then prints one SQL line to run in Supabase. |
 
 Lines marked `WARN` need attention; each one says what to do. The code is in `scripts/ops/`.
+
+### Backups
+
+- **Backup files hold customer names, phone numbers and emails.** `backups/` is never committed to git. Keep it private (an encrypted drive or private cloud folder), never email the files, and delete ones you no longer need.
+- Keep at least one recent copy somewhere other than this computer, so a broken laptop doesn't take the backups with it.
+- If the Supabase project is on the **Pro** plan, Supabase also keeps daily backups itself (Project → Database → Backups). On the **Free** plan it doesn't, so `ops:backup` is your only copy.
+- The website's code is backed up by git and GitHub; only the database needs these backups.
 
 ---
 
@@ -67,6 +76,7 @@ app/                    Pages and API routes. The folder path is the URL.
   menu/page.tsx           /menu          Menu + add to cart
   about/page.tsx          /about         About us
   map/page.tsx            /map           Find a branch
+  privacy/, terms/        /privacy, /terms   Privacy Policy and Terms & Refund Policy
   checkout/page.tsx       /checkout      Details → review → pay
   checkout/success/       /checkout/success   After paying: live order progress
   dashboard/              /dashboard…    Staff area: orders board, order history, sales, performance, team
@@ -75,6 +85,7 @@ app/                    Pages and API routes. The folder path is the URL.
 
 components/             The building blocks of the pages, grouped by page
   home/  about/  menu/  map/  checkout/     one folder per public page
+  legal/                                    the Privacy Policy and Terms text
   dashboard/                                staff area (orders/, team/, auth/, analytics/)
   layout/                                   Navbar and Footer (on every public page)
   shared/                                   small pieces used by more than one page
@@ -135,10 +146,10 @@ Everyone has an account (their name in the list), but passwords are shared per r
 (in `.env.local`, and in Vercel's Environment Variables for the live site). There's no authenticator app or setup code.
 
 1. A manager adds the person on `/dashboard/team` as **Staff** or **Manager**. They can log in straight away.
-2. They log in at `/nambita-staff-access`: choose **Staff** or **Manager**, their name, and type that role's password.
+2. They log in at `/nambita-staff-access`: choose **Staff** or **Manager**, type their name exactly as it is on the Team page (capitals don't matter), and type that role's password. The login page never shows the list of names.
 3. Someone leaves? Click **Deactivate** next to their name (logged out everywhere). If they knew the password, also change it and redeploy: that logs everyone in that role out and the old password stops working.
 
-5 wrong passwords lock that name for 15 minutes.
+5 wrong passwords lock that name for 15 minutes, and each internet address gets 20 login tries every 15 minutes (needs `005_rate_limits.sql`).
 
 > To add the very first manager (e.g. after a fresh database), add a row in Supabase's `staff_accounts` table with their `name` and `role` = `manager`.
 
@@ -162,7 +173,9 @@ Everyone has an account (their name in the list), but passwords are shared per r
 | Change navbar links | `components/layout/Navbar.tsx` → `primaryNavLinks` |
 | Change the receipt or "ready" email | `lib/email/order-emails.ts` |
 | Change page titles for Google | the `layout.tsx` next to each page, and `app/layout.tsx` for the default |
-| Change Google Analytics | the ID: `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env.local` and Vercel. Which pages it skips: `components/layout/GoogleAnalytics.tsx` (it only runs on the live site, never on `/dashboard`, staff login or `/checkout/success`) |
+| Change Google Analytics | the ID: `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env.local` and Vercel. It only runs on the live site, and only after the visitor presses **Accept** on the cookie banner (`components/layout/CookieBanner.tsx`). Which pages it skips: `lib/analytics-consent.ts` (never `/dashboard`, staff login or `/checkout/success`) |
+| Change the Privacy Policy or Terms & Refunds | `components/legal/PrivacyPolicy.tsx` / `TermsOfSale.tsx` (and update the "last updated" date at the top of the file). Update them whenever checkout, refunds or the services we use change |
+| Change a font | `app/layout.tsx`. Only use fonts licensed for business websites (e.g. Google Fonts), never "trial" or "personal use" fonts |
 | Change the checkout form | `components/checkout/DetailsStep.tsx` (and the checks in `app/api/checkout/route.ts`) |
 
 ---

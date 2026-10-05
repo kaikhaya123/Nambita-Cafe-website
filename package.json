@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "ops:check": "node --env-file-if-exists=.env.local scripts/ops/check.mjs",
-    "ops:monthly": "node --env-file-if-exists=.env.local scripts/ops/monthly.mjs"
+    "ops:monthly": "node --env-file-if-exists=.env.local scripts/ops/monthly.mjs",
+    "ops:backup": "node --env-file-if-exists=.env.local scripts/ops/backup.mjs",
+    "ops:restore": "node --env-file-if-exists=.env.local scripts/ops/restore.mjs"
   },
   "browserslist": {
     "production": [

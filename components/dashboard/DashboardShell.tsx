@@ -127,17 +127,17 @@ export default function DashboardShell({
         )
       })}
       {/* Who is logged in, at the bottom of the menu just above Log Out. */}
-      <div className="mt-auto flex items-center gap-3 border-t border-white/15 px-3 pb-2 pt-4 text-white">
+      <div className="mt-auto flex items-center gap-3 border-t border-white/30 px-3 pb-2 pt-4 text-white">
         <RoleAvatar role={role} onDark className="h-9 w-9 shrink-0" />
         <span className="min-w-0 leading-tight">
-          <span className="block text-[10px] uppercase tracking-[0.12em] text-white/50">Logged in as</span>
+          <span className="block text-[10px] uppercase tracking-[0.12em] text-white/80">Logged in as</span>
           <span className="block truncate text-sm font-bold">{staffName}</span>
         </span>
       </div>
       <button
         type="button"
         onClick={logout}
-        className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold uppercase tracking-[0.08em] text-white/60 hover:text-white"
+        className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold uppercase tracking-[0.08em] text-white/80 hover:text-white"
       >
         <NavIcon src="/Icons/turn-off.png" onDark />
         Log Out

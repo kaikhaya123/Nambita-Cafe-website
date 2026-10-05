@@ -8,8 +8,10 @@ import StepHeader from '@/components/checkout/StepHeader'
 import type { CustomerDetails } from '@/components/checkout/types'
 import { cafeLocations } from '@/lib/cafe-locations'
 
+// The 50% border is the lightest that still clearly shows where each field is (3.5:1 on white).
+// When a field is selected it gets a solid black 2px edge (border + ring), so it's obvious where you're typing.
 const inputClassName =
-  'rounded-xl border border-black/15 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900'
+  'rounded-xl border border-black-900/50 bg-white px-4 py-3 font-dm-sans text-sm text-black-900 outline-none focus:border-black-900 focus:ring-1 focus:ring-black-900'
 
 export default function DetailsStep({
   details,
@@ -123,10 +125,19 @@ export default function DetailsStep({
               value={details.notes}
               onChange={onFieldChange('notes')}
               className={inputClassName}
-              placeholder="Gate code, allergies, etc."
+              placeholder="Allergies or special requests"
             />
           </label>
         </FieldGroup>
+
+        {/* POPIA: tell customers why we ask for their details, before they give them. */}
+        <p className="font-dm-sans text-xs leading-5 text-black-900/60">
+          We only use your details to prepare your order and contact you about it. See our{' '}
+          <a href="/privacy" target="_blank" rel="noopener" className="underline underline-offset-2">
+            Privacy Policy
+          </a>
+          .
+        </p>
 
         <button
           type="submit"

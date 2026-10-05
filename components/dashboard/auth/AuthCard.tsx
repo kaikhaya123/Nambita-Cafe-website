@@ -3,7 +3,7 @@ import Image from 'next/image'
 // Shared frame and field styles for the login screen.
 
 export const inputClass =
-  'mt-2 w-full rounded-lg border border-black-900/30 bg-white px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-2 focus:ring-brand-yellow'
+  'mt-2 w-full rounded-lg border border-black-900/50 bg-white px-4 py-3 text-base outline-none focus:border-black-900 focus:ring-1 focus:ring-black-900'
 
 export const labelClass = 'mt-4 block text-xs font-bold uppercase tracking-[0.12em]'
 
@@ -37,37 +37,5 @@ export function FormError({ message }: Readonly<{ message: string | null }>) {
     <p role="alert" className="mt-3 text-sm font-bold text-red-700">
       {message}
     </p>
-  )
-}
-
-export function Select({
-  id,
-  value,
-  onChange,
-  placeholder,
-  children,
-}: Readonly<{ id: string; value: string; onChange: (value: string) => void; placeholder: string; children: React.ReactNode }>) {
-  return (
-    <div className="relative">
-      <select
-        id={id}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className={`${inputClass} appearance-none pr-10 ${value ? 'text-black-900' : 'text-black-900/40'}`}
-      >
-        <option value="" disabled>
-          {placeholder}
-        </option>
-        {children}
-      </select>
-      <svg
-        aria-hidden
-        viewBox="0 0 20 20"
-        className="pointer-events-none absolute right-4 top-1/2 mt-1 h-4 w-4 -translate-y-1/2 text-black-900/60"
-        fill="currentColor"
-      >
-        <path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4Z" />
-      </svg>
-    </div>
   )
 }

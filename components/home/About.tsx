@@ -92,7 +92,7 @@ export default function AboutTeaser() {
               <motion.a
                 href="/about"
                 whileHover={{ y: -2, scale: 1.02 }}
-                className="btn group relative z-10 gap-3 bg-white pr-2 text-black-900 shadow-xl transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-black-900"
+                className="btn group relative z-10 gap-3 bg-white pr-2 text-black-900 shadow-xl transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-black-900"
               >
                 <span className="relative">About Nambita Cafe</span>
                 <svg
