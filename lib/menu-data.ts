@@ -44,7 +44,7 @@ export const menuSections: MenuSection[] = [
         id: 'wors-roll-combo',
         name: 'WORS ROLL COMBO',
         description: 'Grilled boerewors in a fresh roll with red onions, served with chips and a drink.',
-        price: 55,
+        price: 65,
         image: '/Images/Remove Logo from Image-Photoroom.png',
       },
     ],
