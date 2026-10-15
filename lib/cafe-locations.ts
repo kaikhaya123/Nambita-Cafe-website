@@ -29,7 +29,7 @@ export const cafeLocations: CafeLocation[] = [
   {
     id: 'waterloo',
     name: 'Nambita Cafe Waterloo',
-    addressLine1: '346 Pricklepear Rd',
+    addressLine1: '4 20278 St',
     addressLine2: 'Waterloo, Blackburn, 4319',
     lat: -29.6643,
     lng: 31.059,

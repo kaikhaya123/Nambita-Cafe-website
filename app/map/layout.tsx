@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { cafeLocations } from '@/lib/cafe-locations'
 import { buildPageMetadata } from '@/lib/seo'
 
-// e.g. "206 Bhenjane Rd, KwaMashu and 346 Pricklepear Rd, Waterloo"
+// e.g. "206 Bhenjane Rd, KwaMashu and 4 20278 St, Waterloo"
 const addresses = cafeLocations.map((l) => `${l.addressLine1}, ${l.addressLine2.split(',')[0]}`).join(' and ')
 const areas = cafeLocations.map((l) => l.addressLine2.split(',')[0]).join(' & ')
 

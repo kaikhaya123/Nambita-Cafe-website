@@ -50,7 +50,11 @@ export const TICKET_NUMBER_MAX = 100
  * webhook, status checks); this is only for showing. Anything that doesn't look like an order number is shown as it is.
  */
 export function ticketNumber(orderNumber: string) {
-  const counter = Number(/(\d+)$/.exec(orderNumber)?.[1])
+  // Walk back from the end over the digits ("0005" in "NC-2026-0005"). A loop instead of the regex /(\d+)$/,
+  // which re-scans the text from every starting point and gets slow on long, odd input.
+  let start = orderNumber.length
+  while (start > 0 && orderNumber[start - 1] >= '0' && orderNumber[start - 1] <= '9') start--
+  const counter = Number(orderNumber.slice(start))
   if (!Number.isInteger(counter) || counter < 1) return orderNumber
   const ticket = ((counter - 1) % TICKET_NUMBER_MAX) + 1
   return String(ticket).padStart(3, '0')
