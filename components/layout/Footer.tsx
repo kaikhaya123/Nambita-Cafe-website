@@ -1,10 +1,9 @@
-// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials, contact email,
-// and the legal links (Privacy Policy, Terms & Refunds, Cookie settings).
+// Site footer shown at the bottom of every public page: logo, links, branch addresses, socials, contact phone and email,
+// and the legal links (Privacy Policy, Terms & Refunds).
 
 import Image from 'next/image'
 import Link from 'next/link'
-import CookieSettingsButton from '@/components/layout/CookieSettingsButton'
-import { cafeLocations, contactEmail, directionsHref } from '@/lib/cafe-locations'
+import { cafeLocations, contactEmail, contactPhone, contactPhoneHref, directionsHref } from '@/lib/cafe-locations'
 
 const exploreLinks = [
   { name: 'Home', href: '/' },
@@ -17,6 +16,11 @@ const socialLinks = [
   { name: 'Instagram', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/instagram (3).png' },
   { name: 'Facebook', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/facebook-app-symbol (2).png' },
   { name: 'TikTok', href: 'https://www.instagram.com/nambitacafe/', icon: '/Icons/tik-tok (1).webp' },
+]
+
+const contactLinks = [
+  { text: contactPhone, href: contactPhoneHref, icon: '/Icons/telephone.png' },
+  { text: contactEmail, href: `mailto:${contactEmail}`, icon: '/Icons/mail.png' },
 ]
 
 const legalLinks = [
@@ -65,11 +69,16 @@ export default function Footer() {
           <ul className="mt-4 space-y-6">
             {cafeLocations.map((location) => (
               <li key={location.id}>
-                {/* Branch name on its own line, then the address split over two short lines. */}
-                <a href={directionsHref(location)} target="_blank" rel="noreferrer" className={`group block leading-relaxed ${linkClass}`}>
-                  <span className="mb-1 block font-dm-sans-bold text-white group-hover:text-brand-caramel">{location.name}</span>
-                  <span className="block">{location.addressLine1}</span>
-                  <span className="block">{location.addressLine2}</span>
+                {/* Pin icon, then the branch name on its own line and the address split over two short lines.
+                    The address lines are indented to start under the name, not under the pin. */}
+                <a href={directionsHref(location)} target="_blank" rel="noreferrer" className={`group flex gap-2 leading-relaxed ${linkClass}`}>
+                  {/* Black icon image: `brightness-0 invert` makes it pure white, like the Contact Us icons. */}
+                  <Image src="/Icons/location.png" alt="" width={18} height={18} aria-hidden="true" className="mt-[3px] h-[18px] w-[18px] shrink-0 object-contain brightness-0 invert" />
+                  <span>
+                    <span className="mb-1 block font-dm-sans-bold text-white group-hover:text-brand-caramel">{location.name}</span>
+                    <span className="block">{location.addressLine1}</span>
+                    <span className="block">{location.addressLine2}</span>
+                  </span>
                 </a>
               </li>
             ))}
@@ -92,12 +101,18 @@ export default function Footer() {
 
         <div>
           <p className={headingClass}>Contact Us</p>
+          {/* Same icon + text layout as Social Media. */}
           <ul className="mt-4 space-y-3">
-            <li>
-              <a href={`mailto:${contactEmail}`} className={linkClass}>
-                {contactEmail}
-              </a>
-            </li>
+            {contactLinks.map((contact) => (
+              <li key={contact.href}>
+                <a href={contact.href} className={`flex items-center gap-2 ${linkClass}`}>
+                  {/* These icon images are black outlines. `brightness-0 invert` makes them pure white on the dark
+                      footer, and they're a bit bigger than the social icons so the thin lines don't fade to grey. */}
+                  <Image src={contact.icon} alt="" width={18} height={18} aria-hidden="true" className="h-[18px] w-[18px] object-contain brightness-0 invert" />
+                  {contact.text}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -113,9 +128,6 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <CookieSettingsButton className={linkClass} />
-            </li>
           </ul>
           <p>© 2026 Nambita Cafe. All rights reserved.</p>
         </div>

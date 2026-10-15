@@ -2,7 +2,7 @@
 
 // Remembers whether the visitor said yes or no to Google Analytics cookies (saved in their browser).
 // Google Analytics only loads after "yes" (components/layout/GoogleAnalytics.tsx). The cookie banner
-// (components/layout/CookieBanner.tsx) asks until they choose, and "Cookie settings" in the footer asks again.
+// (components/layout/CookieBanner.tsx) asks until they choose.
 
 import { useSyncExternalStore } from 'react'
 

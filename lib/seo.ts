@@ -3,7 +3,7 @@
 // Set NEXT_PUBLIC_SITE_URL for the real domain.
 
 import type { Metadata } from 'next'
-import { cafeLocations, contactEmail } from '@/lib/cafe-locations'
+import { cafeLocations, contactEmail, contactPhoneHref } from '@/lib/cafe-locations'
 import { menuSections } from '@/lib/menu-data'
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://nambitacafe.co.za').replace(/\/$/, '')
@@ -91,6 +91,8 @@ export function siteStructuredData() {
         logo: absoluteUrl('/icon.png'),
         image: absoluteUrl(seoConfig.ogImage),
         email: contactEmail,
+        // Google wants the international format, e.g. +27656866171.
+        telephone: contactPhoneHref.replace('tel:', ''),
         sameAs: SOCIAL_PROFILES,
       },
       {

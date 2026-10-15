@@ -4,6 +4,12 @@
 /** The cafe's public contact email: shown in the footer, the legal pages and Google's business info. */
 export const contactEmail = 'info@nambitacafe.co.za'
 
+/** The cafe's public phone number: shown in the footer, the Terms page and Google's business info. */
+export const contactPhone = '065 686 6171'
+
+/** The same number for "tap to call" links: South African country code (+27) instead of the first 0. */
+export const contactPhoneHref = `tel:+27${contactPhone.replace(/\s/g, '').slice(1)}`
+
 export interface CafeLocation {
   id: string
   name: string

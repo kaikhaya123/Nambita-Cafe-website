@@ -3,9 +3,9 @@
 
 import Link from 'next/link'
 import LegalPage, { LegalSection } from '@/components/legal/LegalPage'
-import { cafeLocations, contactEmail } from '@/lib/cafe-locations'
+import { cafeLocations, contactEmail, contactPhone, contactPhoneHref } from '@/lib/cafe-locations'
 
-export const TERMS_UPDATED = '5 October 2026'
+export const TERMS_UPDATED = '15 October 2026'
 
 export default function TermsOfSale() {
   const branchNames = cafeLocations.map((location) => location.name).join(' or ')
@@ -93,8 +93,8 @@ export default function TermsOfSale() {
 
       <LegalSection title="7. Contact us">
         <p>
-          Questions or complaints: email <a href={`mailto:${contactEmail}`}>{contactEmail}</a>, or speak to us at
-          either branch:
+          Questions or complaints: call <a href={contactPhoneHref}>{contactPhone}</a>, email{' '}
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>, or speak to us at either branch:
         </p>
         <ul>
           {cafeLocations.map((location) => (

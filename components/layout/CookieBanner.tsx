@@ -1,7 +1,7 @@
 'use client'
 
-// Asks visitors whether Google Analytics may set cookies. Shown on public pages until they choose;
-// "Cookie settings" in the footer brings it back. The choice is kept by lib/analytics-consent.ts.
+// Asks visitors whether Google Analytics may set cookies. Shown on public pages until they choose.
+// The choice is kept by lib/analytics-consent.ts.
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'

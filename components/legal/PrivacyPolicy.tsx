@@ -5,7 +5,7 @@ import Link from 'next/link'
 import LegalPage, { LegalSection } from '@/components/legal/LegalPage'
 import { cafeLocations, contactEmail } from '@/lib/cafe-locations'
 
-export const PRIVACY_UPDATED = '5 October 2026'
+export const PRIVACY_UPDATED = '15 October 2026'
 
 export default function PrivacyPolicy() {
   return (
@@ -121,8 +121,8 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
         <p>
-          You can change your choice at any time with <strong>Cookie settings</strong> at the bottom of every page.
-          Saying no removes the Google Analytics cookies.
+          To change your choice, clear this website&apos;s cookies and site data in your browser settings. We&apos;ll
+          ask again on your next visit.
         </p>
       </LegalSection>
 
